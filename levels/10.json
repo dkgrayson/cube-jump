@@ -1,6 +1,7 @@
 {
+  "name": "The Finale",
   "background": "0xFFEFD5",
-  "platformColor": "0xFFEFD5",
+  "platformColor": "0xFFDAB9",
   "platforms": [
     { "x": 0, "y": -10, "z": 0, "width": 15, "depth": 15, "isFirst": true },
     { "x": 25, "y": -8, "z": 5, "width": 12, "depth": 12 },

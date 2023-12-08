@@ -1,6 +1,7 @@
 {
+  "name": "The Beginning",
   "background": "0xF98D8D",
-  "platformColor": "0xFF9999",
+  "platformColor": "0xFFE9E9",
   "platforms": [
     { "x": 0, "y": -5, "z": 0, "width": 10, "depth": 10, "isFirst": true },
     { "x": 20, "y": -3, "z": 0, "width": 8, "depth": 8 },
