@@ -5,6 +5,7 @@ export class Platform {
     constructor(scene, world, x, y, z, width, depth) {
         this.scene = scene;
         this.world = world;
+        this.isGround = true;
 
         // Three.js setup
         const geometry = new THREE.BoxGeometry(width, 1, depth);

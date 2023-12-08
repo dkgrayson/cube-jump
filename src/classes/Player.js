@@ -21,12 +21,13 @@ export class Player {
         });
         world.addBody(this.body);
 
-        this.moveSpeed = 1;
+        this.moveSpeed = 2;
         this.jumpSpeed = 20;
         this.velocity = new THREE.Vector3();
         this.isJumping = false;
-        this.maxJumpHeight = 50; // Maximum height the player can reach
-        this.startJumpHeight = 0; // Height at which the last jump started
+        this.maxJumpHeight = 7;
+        this.startJumpHeight = 0;
+        this.isOnGround = true;
 
         this.keys = {
             left: false,
@@ -61,7 +62,9 @@ export class Player {
                 this.keys.forward = true;
                 break;
             case 32: //space jump
-                this.keys.jump = true;
+                if (this.isOnGround)  {
+                    this.keys.jump = true;
+                }
                 break;
         }
     }
@@ -86,9 +89,12 @@ export class Player {
         }
     }
 
-     handleCollision = (event) => {
-        // Reset isJumping when colliding with the ground
-        this.isJumping = false;
+    handleCollision = (event) => {
+        // Check if the collision is with the ground or a platform
+        let collidedBody = event.contact.bi === this.body ? event.contact.bj : event.contact.bi;
+        if (collidedBody.isGround) {
+            this.isOnGround = true;
+        }
     }
 
     update() {
@@ -104,21 +110,15 @@ export class Player {
         this.body.velocity.z = this.velocity.z
 
         // Handle jumping
-        if (this.keys.jump) {
+        if (this.keys.jump && this.isOnGround) {
             if (!this.isJumping) {
-                // Start jump if not already jumping
                 this.startJumpHeight = this.mesh.position.y;
                 this.isJumping = true;
             }
-            // Continue applying upward force as long as space is held and max height not reached
             if (this.mesh.position.y - this.startJumpHeight < this.maxJumpHeight) {
                 this.body.applyForce(new CANNON.Vec3(0, this.jumpSpeed, 0), this.body.position);
             }
         } else if (this.isJumping) {
-            // Stop upward movement when space is released
-            if (this.body.velocity.y > 0) {
-                this.body.velocity.y = 0;
-            }
             this.isJumping = false;
         }
 
