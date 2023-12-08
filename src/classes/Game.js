@@ -8,7 +8,7 @@ import level2 from '../../levels/2.json';
 
 export class Game {
   constructor() {
-    this.levels = [level1, level2; //TODO: Move everything for levels to level class
+    this.levels = [level1, level2]; //TODO: Move everything for levels to level class
     this.currentLevelIndex = 0;
     this.gameState = 'playing';
     this.init();
