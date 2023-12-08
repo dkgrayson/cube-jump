@@ -12,8 +12,10 @@ export class PlayerPhysics {
         this.maxJumpHeight = 7;
         this.startJumpHeight = 0;
         this.isOnGround = true;
-        this.moveSpeed = 2;
         this.jumpSpeed = 20;
+        this.acceleration = 10;
+        this.deceleration = 2;
+        this.maxSpeed = 4;
 
         this.keys = {
             left: false,
@@ -92,13 +94,38 @@ export class PlayerPhysics {
     }
 
     updateHorizontalMovement() {
-        this.body.velocity.x = 0;
-        this.body.velocity.z = 0;
-        if (this.keys.right) this.body.velocity.x += this.moveSpeed;
-        if (this.keys.left) this.body.velocity.x -= this.moveSpeed;
-        if (this.keys.forward) this.body.velocity.z -= this.moveSpeed;
-        if (this.keys.backward) this.body.velocity.z += this.moveSpeed;
+        let accelerationVec = new THREE.Vector3();
+
+        if (this.keys.right) accelerationVec.x += this.acceleration;
+        if (this.keys.left) accelerationVec.x -= this.acceleration;
+        if (this.keys.forward) accelerationVec.z -= this.acceleration;
+        if (this.keys.backward) accelerationVec.z += this.acceleration;
+
+        // Apply acceleration
+        this.body.velocity.x += accelerationVec.x * this.world.fixedTimeStep;
+        this.body.velocity.z += accelerationVec.z * this.world.fixedTimeStep;
+
+        // Clamp velocity to maximum speed
+        this.body.velocity.x = THREE.MathUtils.clamp(this.body.velocity.x, -this.maxSpeed, this.maxSpeed);
+        this.body.velocity.z = THREE.MathUtils.clamp(this.body.velocity.z, -this.maxSpeed, this.maxSpeed);
+
+        // Apply deceleration
+        const decelerate = (value, deceleration) => {
+            if (value !== 0) {
+                const dec = deceleration * this.world.fixedTimeStep;
+                return Math.abs(value) - dec > 0 ? value - Math.sign(value) * dec : 0;
+            }
+            return value;
+        };
+
+        if (!this.keys.left && !this.keys.right) {
+            this.body.velocity.x = decelerate(this.body.velocity.x, this.deceleration);
+        }
+        if (!this.keys.forward && !this.keys.backward) {
+            this.body.velocity.z = decelerate(this.body.velocity.z, this.deceleration);
+        }
     }
+
 
     updateVeriticalMovement() {
         if (this.keys.jump && this.isOnGround) {

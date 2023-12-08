@@ -11,6 +11,8 @@ export class Game {
     this.levels = [level1, level2]; //TODO: Move everything for levels to level class
     this.currentLevelIndex = 0;
     this.gameState = 'playing';
+    this.loadingLevel = false;
+    this.fixedTimeStep = 1 / 60;
     this.init();
   }
 
@@ -27,6 +29,7 @@ export class Game {
     this.scene.background = new THREE.Color(0xF98D8D);
     this.world = new CANNON.World();
     this.world.gravity.set(0, -9.82, 0);
+    this.world.fixedTimeStep = this.fixedTimeStep;
     this.player = new Player(this.scene, this.world, this, this.level);
   }
 
@@ -43,6 +46,9 @@ export class Game {
   }
 
   loadLevel(levelIndex) {
+    if (this.loadingLevel) return;
+    this.loadingLevel = true;
+
     this.gameState = 'playing';
 
     if (levelIndex >= this.levels.length) {
@@ -58,6 +64,7 @@ export class Game {
 
     if (this.currentLevel.firstPlatform) this.resetPlayerPosition();
     if (this.player && this.player.physics) this.player.physics.resetMovement();
+    this.loadingLevel = false;
   }
 
   resetPlayerPosition() {
@@ -81,26 +88,30 @@ export class Game {
 
   checkLevelCompletion() {
     if (this.gameState !== 'playing') return;
-    if (this.currentLevel.finalPlatform) {
-      const playerPos = this.player.mesh.position;
-      const platformPos = this.currentLevel.finalPlatform.mesh.position;
-      const distance = playerPos.distanceTo(platformPos);
-      const completionThreshold = 5;
 
-      if (distance <= completionThreshold) {
-        this.currentLevelIndex++;
-        this.loadLevel(this.currentLevelIndex);
-      }
+    if (this.currentLevel.finalPlatform) {
+        const playerPos = this.player.mesh.position;
+        const platformPos = this.currentLevel.finalPlatform.mesh.position;
+        const horizontalDistance = new THREE.Vector2(playerPos.x, playerPos.z).distanceTo(new THREE.Vector2(platformPos.x, platformPos.z));
+        const verticalDistance = Math.abs(playerPos.y - platformPos.y);
+
+        // Define thresholds for completion
+        const horizontalThreshold = 5; // Horizontal distance threshold
+        const verticalThreshold = 1; // Vertical distance threshold (e.g., the height of the player)
+
+        if (horizontalDistance <= horizontalThreshold && verticalDistance <= verticalThreshold) {
+            this.currentLevelIndex++;
+            this.loadLevel(this.currentLevelIndex);
+        }
     }
   }
-
   animate = () => {
     if (this.gameState !== 'playing') return;
-    requestAnimationFrame(this.animate);
-    this.world.step(1 / 60);
+    this.world.step(this.fixedTimeStep);
     this.player.update();
     this.cameraController.update(this.player);
     this.checkLevelCompletion();
     this.renderer.render(this.scene, this.cameraController.camera);
+    requestAnimationFrame(this.animate);
   }
 }
