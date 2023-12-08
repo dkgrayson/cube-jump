@@ -15,8 +15,8 @@ export class Game {
 
   init() {
     this.initScene();
-    this.initCamera();
     this.initRedender();
+    this.initCamera();
     this.loadLevel(this.currentLevelIndex);
     this.animate();
   }
@@ -29,7 +29,8 @@ export class Game {
   }
 
   initCamera() {
-    this.cameraController = new Camera();
+    const canvas = this.renderer.domElement;
+    this.cameraController = new Camera(canvas);
   }
 
   initRedender() {
@@ -41,7 +42,7 @@ export class Game {
 
   loadLevel(levelIndex) {
       if (levelIndex >= this.levels.length) {
-          console.log("No more levels");
+          alert("You win");
           return;
       }
 
@@ -67,7 +68,6 @@ export class Game {
 
   handleGameOver() {
     alert('You died')
-    this.isGameOver = false;
     this.currentLevelIndex = 0;
     this.loadLevel(0);
   }
