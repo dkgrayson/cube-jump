@@ -4,7 +4,8 @@ export class Camera {
     constructor(canvas) {
         this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         this.camera.position.set(0, 5, 10);
-        this.canvas = canvas; // Store the canvas reference
+        this.canvas = canvas;
+        this.sensitivity = 0.005;
 
         this.mouse = {
             x: 0,
@@ -33,17 +34,10 @@ export class Camera {
     }
 
     updateCameraOrientation() {
-        // Sensitivity factor for mouse movement
-        const sensitivity = 0.005;
-
-        // Adjust the camera's rotation based on mouse movement
-        this.camera.rotation.y -= this.mouse.dx * sensitivity;
-        this.camera.rotation.x -= this.mouse.dy * sensitivity;
-
-        // Clamp the x rotation to prevent the camera from flipping over
+        this.camera.rotation.y -= this.mouse.dx * this.sensitivity;
+        this.camera.rotation.x -= this.mouse.dy * this.sensitivity;
         this.camera.rotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, this.camera.rotation.x));
 
-        // Reset mouse movement deltas
         this.mouse.dx = 0;
         this.mouse.dy = 0;
 
@@ -51,6 +45,7 @@ export class Camera {
         this.camera.getWorldDirection(direction);
         this.camera.lookAt(direction.add(this.camera.position));
     }
+
 
     initPointerLock() {
         this.canvas.addEventListener('click', () => {
@@ -65,10 +60,8 @@ export class Camera {
 
     onPointerLockChange() {
         if (document.pointerLockElement === this.canvas) {
-            // Pointer is locked
             document.addEventListener('mousemove', this.onMouseMove.bind(this));
         } else {
-            // Pointer is unlocked
             document.removeEventListener('mousemove', this.onMouseMove.bind(this));
         }
     }

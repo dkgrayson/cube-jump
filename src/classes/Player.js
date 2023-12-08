@@ -8,11 +8,14 @@ export class Player {
         this.game = game;
         this.initGraphics();
         this.initPhysics();
+        this.height = 1;
+        this.width = 1;
+        this.depth = 1;
     }
 
     initGraphics() {
-        const geometry = new THREE.BoxGeometry(1, 1, 1);
-        const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+        const geometry = new THREE.BoxGeometry(this.width, this.height, this.depth);
+        const material = new THREE.MeshBasicMaterial({ color: 0x8D8DF9 });
         this.mesh = new THREE.Mesh(geometry, material);
         this.scene.add(this.mesh);
     }
