@@ -36,10 +36,14 @@ class Game {
     }
 
     loadLevel(level) {
-        this.isGameOver
+        this.isGameOver = false;
         this.currentLevel = new Level(this.scene, this.world);
         this.currentLevel.loadLevel(level);
         this.animate();
+    }
+
+    handleGamover() {
+
     }
 
     animate = () => {
