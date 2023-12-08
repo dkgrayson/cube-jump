@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import * as CANNON from 'cannon';
 
 export class Platform {
-    constructor(scene, world, platform) {
+    constructor(scene, world, platform, color) {
         this.x = platform.x;
         this.y = platform.y;
         this.z = platform.z;
@@ -13,9 +13,10 @@ export class Platform {
         this.scene = scene;
         this.world = world;
         this.isGround = true;
+        this.color = new THREE.Color(parseInt(color, 16));
 
         const geometry = new THREE.BoxGeometry(this.width, 1, this.depth);
-        const material = new THREE.MeshBasicMaterial({ color: 0xFF999 });
+        const material = new THREE.MeshBasicMaterial({ color: this.color });
         this.mesh = new THREE.Mesh(geometry, material);
         this.mesh.position.set(this.x, this.y, this.z);
         this.scene.add(this.mesh);

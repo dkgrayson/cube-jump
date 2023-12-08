@@ -1,0 +1,10 @@
+{
+  "background": "0xFFB6C1",
+  "platformColor": "0xFF69B4  ",
+  "platforms": [
+    { "x": 0, "y": -10, "z": 0, "width": 10, "depth": 10, "isFirst": true },
+    { "x": 15, "y": -5, "z": 5, "width": 8, "depth": 8 },
+    { "x": 30, "y": 0, "z": -5, "width": 6, "depth": 6 },
+    { "x": 45, "y": 5, "z": 5, "width": 4, "depth": 4, "isFinal": true }
+  ]
+}

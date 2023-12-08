@@ -5,10 +5,29 @@ import { Level } from './Level';
 import { Camera } from './Camera';
 import level1 from '../../levels/1.json';
 import level2 from '../../levels/2.json';
+import level3 from '../../levels/3.json';
+import level4 from '../../levels/4.json';
+import level5 from '../../levels/5.json';
+import level6 from '../../levels/6.json';
+import level7 from '../../levels/7.json';
+import level8 from '../../levels/8.json';
+import level9 from '../../levels/9.json';
+import level10 from '../../levels/10.json';
 
 export class Game {
   constructor() {
-    this.levels = [level1, level2]; //TODO: Move everything for levels to level class
+    this.levels = [
+      level1,
+      level2,
+      level3,
+      level4,
+      level5,
+      level6,
+      level7,
+      level8,
+      level9,
+      level10
+    ]; //TODO: Move everything for levels to level class
     this.currentLevelIndex = 0;
     this.gameState = 'playing';
     this.loadingLevel = false;
@@ -30,7 +49,7 @@ export class Game {
     this.world = new CANNON.World();
     this.world.gravity.set(0, -9.82, 0);
     this.world.fixedTimeStep = this.fixedTimeStep;
-    this.player = new Player(this.scene, this.world, this, this.level);
+    this.player = new Player(this.scene, this.world, this );
   }
 
   initCamera() {
@@ -59,8 +78,15 @@ export class Game {
 
     if (this.currentLevel) this.currentLevel.clearLevel();
 
+    this.levelData = this.levels[levelIndex];
     this.currentLevel = new Level(this.scene, this.world);
-    this.currentLevel.loadLevel(this.levels[levelIndex]);
+    this.currentLevel.loadLevel(this.levelData);
+
+    if (this.levelData.background) {
+        const bgColor = parseInt(this.levelData.background, 16);
+        this.scene.background = new THREE.Color(bgColor);
+    }
+
 
     if (this.currentLevel.firstPlatform) this.resetPlayerPosition();
     if (this.player && this.player.physics) this.player.physics.resetMovement();
