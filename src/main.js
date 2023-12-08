@@ -34,9 +34,20 @@ class Game {
     animate = () => {
         requestAnimationFrame(this.animate);
         this.world.step(1 / 60);
+
+        // Update player
         this.player.update();
+
+        // Make the camera follow the player
+        this.camera.position.x = this.player.mesh.position.x;
+        this.camera.position.y = this.player.mesh.position.y + 5; // Offset by 5 units above
+        this.camera.position.z = this.player.mesh.position.z + 10; // Offset by 10 units behind
+        this.camera.lookAt(this.player.mesh.position);
+
+        // Render the scene
         this.renderer.render(this.scene, this.camera);
     }
+
 }
 
 new Game();

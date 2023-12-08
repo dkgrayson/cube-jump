@@ -20,6 +20,46 @@ export class Player {
             shape: shape
         });
         world.addBody(this.body);
+
+        document.addEventListener('keydown', this.onKeyDown);
+        document.addEventListener('keyup', this.onKeyUp);
+    }
+
+    onKeyDown = (event) => {
+        switch (event.keyCode) {
+            case 37: // Left arrow key
+                this.body.velocity.x = -5;
+                break;
+            case 39: // Right arrow key
+                this.body.velocity.x = 5;
+                break;
+        }
+        switch (event.keyCode) {
+            case 68: //d right
+                this.body.velocity.x = 5;
+                break;
+            case 83: //s backwards
+                this.body.velocity.z = 5;
+                break;
+            case 65: //a left
+                this.body.velocity.x = -5;
+                break;
+            case 87: //w forwards
+                this.body.velocity.z = -5;
+                break;
+        }
+    }
+
+    onKeyUp = (event) => {
+        switch (event.keyCode) {
+            case 68:
+            case 83:
+            case 65:
+            case 87:
+                this.body.velocity.y = 0;
+                this.body.velocity.x = 0;
+                break;
+        }
     }
 
     update() {
