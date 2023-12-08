@@ -1,0 +1,12 @@
+{
+  "platforms": [
+    { "x": 0, "y": -5, "z": 0, "width": 10, "depth": 10 },
+    { "x": 15, "y": -3, "z": 0, "width": 5, "depth": 5 }
+  ],
+  "enemies": [
+    { "type": "patrol", "x": 5, "y": 0, "z": 0, "path": [] }
+  ],
+  "collectibles": [
+    { "type": "coin", "x": 8, "y": 2, "z": 0 }
+  ]
+}
