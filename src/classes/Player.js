@@ -2,9 +2,10 @@ import * as THREE from 'three';
 import { PlayerPhysics } from './PlayerPhysics.js';
 
 export class Player {
-    constructor(scene, world) {
+    constructor(scene, world, game) {
         this.scene = scene;
         this.world = world;
+        this.game = game;
         this.initGraphics();
         this.initPhysics();
     }
@@ -22,6 +23,7 @@ export class Player {
 
     handleGameOver() {
         this.resetPosition();
+        this.game.handleGameOver();
     }
 
     resetPosition() {
@@ -34,6 +36,7 @@ export class Player {
 
     updatePosition(p, q) {
         this.mesh.position.copy(p);
+        this.physics.body.position.copy(p);
         this.mesh.quaternion.copy(q);
     }
 }

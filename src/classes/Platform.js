@@ -2,25 +2,29 @@ import * as THREE from 'three';
 import * as CANNON from 'cannon';
 
 export class Platform {
-    constructor(scene, world, x, y, z, width, depth) {
+    constructor(scene, world, platform) {
+        this.x = platform.x;
+        this.y = platform.y;
+        this.z = platform.z;
+        this.width = platform.width;
+        this.depth = platform.depth;
+        this.isFinal = platform.isFinal;
+        this.isFirst = platform.isFirst;
         this.scene = scene;
         this.world = world;
         this.isGround = true;
 
-        // Three.js setup
-        const geometry = new THREE.BoxGeometry(width, 1, depth);
-        const material = new THREE.MeshBasicMaterial({ color: 0x8B4513 });
+        const geometry = new THREE.BoxGeometry(this.width, 1, this.depth);
+        const material = new THREE.MeshBasicMaterial({ color: 0xFF999 });
         this.mesh = new THREE.Mesh(geometry, material);
-        this.mesh.position.set(x, y, z);
-        scene.add(this.mesh);
-
-        // Cannon.js setup
-        const shape = new CANNON.Box(new CANNON.Vec3(width / 2, 0.5, depth / 2));
+        this.mesh.position.set(this.x, this.y, this.z);
+        this.scene.add(this.mesh);
+        const shape = new CANNON.Box(new CANNON.Vec3(this.width / 2, 0.5, this.depth / 2));
         this.body = new CANNON.Body({
             mass: 0,
-            position: new CANNON.Vec3(x, y, z),
+            position: new CANNON.Vec3(this.x, this.y, this.z),
             shape: shape
         });
-        world.addBody(this.body);
+        this.world.addBody(this.body);
     }
 }

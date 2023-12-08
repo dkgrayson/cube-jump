@@ -114,6 +114,11 @@ export class PlayerPhysics {
         }
     }
 
+    resetMovement() {
+        this.body.velocity.set(0, 0, 0);
+        this.body.angularVelocity.set(0, 0, 0);
+    }
+
     updateGameOver() {
         if (this.player.mesh.position.y < -20) {
             this.body.position.set(0, 0, 0);

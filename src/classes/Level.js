@@ -4,12 +4,27 @@ export class Level {
     constructor(scene, world) {
         this.scene = scene;
         this.world = world;
+        this.objects = []; // Array to store level objects
+        this.firstPlatform = null;
+        this.finalPlatform = null;
     }
 
     loadLevel(levelData) {
+        this.clearLevel();
+
         levelData.platforms.forEach(p => {
-            new Platform(this.scene, this.world, p.x, p.y, p.z, p.width, p.depth);
+            const platform = new Platform(this.scene, this.world, p);
+            this.objects.push(platform); // Store reference to platform
+            if (p.isFinal) this.finalPlatform = platform;
+            if (p.isFirst) this.firstPlatform = platform;
         });
-        // Add logic for other elements like enemies, collectibles, etc.
+    }
+
+    clearLevel() {
+        this.objects.forEach(obj => {
+            if (obj.mesh) this.scene.remove(obj.mesh);
+            if (obj.body) this.world.removeBody(obj.body);
+        });
+        this.objects = [];
     }
 }
