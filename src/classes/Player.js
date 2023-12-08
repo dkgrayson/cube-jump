@@ -47,6 +47,12 @@ export class Player {
         this.body.addEventListener('collide', this.handleCollision);
     }
 
+    resetPosition() {
+        this.body.position.set(0, 0, 0);
+        this.mesh.position.copy(this.body.position);
+        this.isJumping = false;
+    }
+
     onKeyDown = (event) => {
         switch (event.keyCode) {
             case 68: //d right
@@ -97,7 +103,7 @@ export class Player {
         }
     }
 
-    update() {
+    update(isGameOver) {
         // Handle horizontal movement
         this.velocity.x = 0;
         this.velocity.z = 0;
@@ -120,6 +126,11 @@ export class Player {
             }
         } else if (this.isJumping) {
             this.isJumping = false;
+        }
+
+        if (this.mesh.position.y < -20) { // Adjust the threshold as needed
+            isGameOver = true; // Set the game over state
+            this.resetPosition(); // Reset the player's position
         }
 
         this.mesh.position.copy(this.body.position);

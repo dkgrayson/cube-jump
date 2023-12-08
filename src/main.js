@@ -36,6 +36,7 @@ class Game {
     }
 
     loadLevel(level) {
+        this.isGameOver
         this.currentLevel = new Level(this.scene, this.world);
         this.currentLevel.loadLevel(level);
         this.animate();
@@ -44,7 +45,7 @@ class Game {
     animate = () => {
         requestAnimationFrame(this.animate);
         this.world.step(1 / 60);
-        this.player.update();
+        this.player.update(this.isGameOver);
         this.cameraController.update(this.player);
         this.renderer.render(this.scene, this.cameraController.camera);
     }
