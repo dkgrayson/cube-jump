@@ -144,6 +144,8 @@ export class PlayerPhysics {
     resetMovement() {
         this.body.velocity.set(0, 0, 0);
         this.body.angularVelocity.set(0, 0, 0);
+        this.body.force.set(0, 0, 0);
+        this.body.torque.set(0, 0, 0);
     }
 
     updateGameOver() {

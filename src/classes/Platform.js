@@ -18,6 +18,8 @@ export class Platform {
         const geometry = new THREE.BoxGeometry(this.width, 1, this.depth);
         const material = new THREE.MeshBasicMaterial({ color: this.color });
         this.mesh = new THREE.Mesh(geometry, material);
+        this.mesh.castShadow = true;
+        this.mesh.receiveShadow = true;
         this.mesh.position.set(this.x, this.y, this.z);
         this.scene.add(this.mesh);
         const shape = new CANNON.Box(new CANNON.Vec3(this.width / 2, 0.5, this.depth / 2));

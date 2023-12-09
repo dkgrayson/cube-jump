@@ -29,7 +29,7 @@ export class Game {
       level10
     ]; //TODO: Move everything for levels to level class
     this.currentLevelIndex = 0;
-    this.gameState = 'playing';
+    this.gameState = 'starting';
     this.loadingLevel = false;
     this.fixedTimeStep = 1 / 60;
     this.init();
@@ -39,6 +39,7 @@ export class Game {
     this.initScene();
     this.initRedender();
     this.initCamera();
+    this.initLights();
     this.loadLevel(this.currentLevelIndex);
     this.animate();
   }
@@ -60,19 +61,26 @@ export class Game {
   initRedender() {
     this.renderer = new THREE.WebGLRenderer();
     this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.renderer.shadowMap.enabled = true;
+    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     document.body.innerHTML = '';
     document.body.appendChild(this.renderer.domElement);
+  }
+
+  initLights() {
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    directionalLight.position.set(10, 10, 10);
+    directionalLight.castShadow = true;
+    this.scene.add(directionalLight);
   }
 
   loadLevel(levelIndex) {
     if (this.loadingLevel) return;
     this.loadingLevel = true;
 
-    this.gameState = 'playing';
-
     if (levelIndex >= this.levels.length) {
         this.gameState = 'win';
-        alert("You win!");
+        alert('You win!');
         return;
     }
 
@@ -87,18 +95,17 @@ export class Game {
         this.scene.background = new THREE.Color(bgColor);
     }
 
-
     if (this.currentLevel.firstPlatform) this.resetPlayerPosition();
     if (this.player && this.player.physics) this.player.physics.resetMovement();
+    this.gameState = 'playing';
     this.loadingLevel = false;
   }
 
-  resetPlayerPosition() {
+  resetPlayerPosition() { // TODO: Move player controls to player
     const platform = this.currentLevel.firstPlatform;
     const platformPosition = platform.mesh.position;
-    const playerHeight = 1; // Assuming the player's height is 1 unit
+    const playerHeight = this.player.height;
 
-    // Place the player on top of the platform
     this.player.mesh.position.set(platformPosition.x, platformPosition.y + playerHeight, platformPosition.z);
     this.player.physics.body.position.set(platformPosition.x, platformPosition.y + playerHeight, platformPosition.z);
   }
@@ -108,8 +115,7 @@ export class Game {
 
     this.gameState = 'gameOver';
     alert('You died');
-    this.currentLevelIndex = 0;
-    this.loadLevel(0);
+    this.loadLevel(this.currentLevelIndex);
   }
 
   checkLevelCompletion() {
@@ -131,6 +137,7 @@ export class Game {
         }
     }
   }
+
   animate = () => {
     if (this.gameState !== 'playing') return;
     this.world.step(this.fixedTimeStep);
