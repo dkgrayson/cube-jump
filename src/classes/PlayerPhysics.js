@@ -148,10 +148,11 @@ export class PlayerPhysics {
         this.body.torque.set(0, 0, 0);
     }
 
-    updateGameOver() {
+    handleGameOver() {
         if (this.player.mesh.position.y < -20) {
             this.body.position.set(0, 0, 0);
             this.isJumping = false;
+            this.resetMovement();
             this.player.handleGameOver();
         }
     }
@@ -167,6 +168,6 @@ export class PlayerPhysics {
         this.updateHorizontalMovement();
         this.updateVeriticalMovement();
         this.player.updatePosition(this.body.position, this.body.quaternion);
-        this.updateGameOver();
+        this.handleGameOver();
     }
 }

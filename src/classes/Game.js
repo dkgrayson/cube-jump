@@ -114,7 +114,7 @@ export class Game {
     if (this.gameState !== 'playing') return;
 
     this.gameState = 'gameOver';
-    alert('You died');
+    console.log('DEAD AGAIN');
     this.loadLevel(this.currentLevelIndex);
   }
 

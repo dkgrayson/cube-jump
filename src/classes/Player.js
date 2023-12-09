@@ -13,13 +13,13 @@ export class Player {
         this.initPhysics();
 
         // Store the initial position and quaternion
-        this.initPosition = new THREE.Vector3(); // Default (0, 0, 0) or set to your initial position
-        this.initQuaternion = new THREE.Quaternion(); // Default (no rotation)
+        this.initPosition = new THREE.Vector3();
+        this.initQuaternion = new THREE.Quaternion();
     }
 
     initGraphics() {
         const geometry = new THREE.BoxGeometry(this.width, this.height, this.depth);
-        const material = new THREE.MeshBasicMaterial({ color: 0x8D8DF9 });
+        const material = new THREE.MeshBasicMaterial({ color: 0x003366 });
         this.mesh = new THREE.Mesh(geometry, material);
         this.mesh.castShadow = true;
         this.mesh.receiveShadow = true;
@@ -36,16 +36,10 @@ export class Player {
     }
 
     resetPosition() {
-        // Reset to initial position and quaternion
         this.mesh.position.copy(this.initPosition);
-        this.mesh.quaternion.copy(this.initQuaternion);
-
-        // Also reset the physics body if available
-        if (this.physics) {
-            this.physics.body.position.copy(this.initPosition);
-            this.physics.body.quaternion.copy(this.initQuaternion);
-            this.physics.resetMovement();
-        }
+        this.physics.body.position.copy(this.initPosition);
+        this.mesh.quaternion.set(0, 0, 0, 1);
+        this.physics.body.quaternion.set(0, 0, 0, 1);
     }
 
     update() {
