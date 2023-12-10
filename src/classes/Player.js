@@ -9,17 +9,17 @@ export class Player {
         this.height = 1;
         this.width = 1;
         this.depth = 1;
+        this.color = 0x003366;
+        this.initPosition = new THREE.Vector3(0, 10, 0); // Example starting position
+        this.initQuaternion = new THREE.Quaternion(); // Default quaternion
         this.initGraphics();
         this.initPhysics();
-
-        // Store the initial position and quaternion
-        this.initPosition = new THREE.Vector3();
-        this.initQuaternion = new THREE.Quaternion();
     }
 
+
     initGraphics() {
-        const geometry = new THREE.BoxGeometry(this.width, this.height, this.depth);
-        const material = new THREE.MeshBasicMaterial({ color: 0x003366 });
+        let geometry = new THREE.BoxGeometry(this.width, this.height, this.depth);
+        let material = new THREE.MeshBasicMaterial({ color: this.color });
         this.mesh = new THREE.Mesh(geometry, material);
         this.mesh.castShadow = true;
         this.mesh.receiveShadow = true;
@@ -30,25 +30,27 @@ export class Player {
         this.physics = new PlayerPhysics(this.scene, this.world, this);
     }
 
+    checkGameOver() {
+        return this.mesh.position.y < -20;
+    }
+
     handleGameOver() {
-        this.resetPosition();
+        this.reset();
+        this.physics.handleGameOver();
         this.game.handleGameOver();
     }
 
-    resetPosition() {
-        this.mesh.position.copy(this.initPosition);
-        this.physics.body.position.copy(this.initPosition);
-        this.mesh.quaternion.set(0, 0, 0, 1);
-        this.physics.body.quaternion.set(0, 0, 0, 1);
-    }
-
-    update() {
-        this.physics.update();
+    reset() {
+        this.updatePosition(this.initPosition, this.initQuaternion)
     }
 
     updatePosition(p, q) {
         this.mesh.position.copy(p);
-        this.physics.body.position.copy(p);
         this.mesh.quaternion.copy(q);
+    }
+
+    update() {
+        this.physics.update();
+        if (this.checkGameOver()) this.handleGameOver();
     }
 }

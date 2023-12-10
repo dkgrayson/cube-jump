@@ -37,7 +37,7 @@ export class Game {
 
   init() {
     this.initScene();
-    this.initRedender();
+    this.initRendender();
     this.initCamera();
     this.initLights();
     this.loadLevel(this.currentLevelIndex);
@@ -50,7 +50,7 @@ export class Game {
     this.world = new CANNON.World();
     this.world.gravity.set(0, -9.82, 0);
     this.world.fixedTimeStep = this.fixedTimeStep;
-    this.player = new Player(this.scene, this.world, this );
+    this.player = new Player(this.scene, this.world, this);
   }
 
   initCamera() {
@@ -58,7 +58,7 @@ export class Game {
     this.cameraController = new Camera(canvas);
   }
 
-  initRedender() {
+  initRendender() {
     this.renderer = new THREE.WebGLRenderer();
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.shadowMap.enabled = true;
@@ -94,19 +94,18 @@ export class Game {
         const bgColor = parseInt(this.levelData.background, 16);
         this.scene.background = new THREE.Color(bgColor);
     }
-
-    if (this.currentLevel.firstPlatform) this.resetPlayerPosition();
+    let firstPlatform = this.currentLevel.firstPlatform;
+    // if (firstPlatform) this.resetPlayerPosition(firstPlatform);
     if (this.player && this.player.physics) this.player.physics.resetMovement();
     this.gameState = 'playing';
     this.loadingLevel = false;
   }
 
-  resetPlayerPosition() { // TODO: Move player controls to player
-    const platform = this.currentLevel.firstPlatform;
-    const platformPosition = platform.mesh.position;
-    const playerHeight = this.player.height;
+  resetPlayerPosition(firstPlatform) { // TODO: Move player controls to player
+    let platformPosition = firstPlatform.mesh.position;
+    let playerHeight = this.player.height;
 
-    this.player.mesh.position.set(platformPosition.x, platformPosition.y + playerHeight, platformPosition.z);
+    this.player.mesh.position.copy(platformPosition.x, platformPosition.y + playerHeight, platformPosition.z);
     this.player.physics.body.position.set(platformPosition.x, platformPosition.y + playerHeight, platformPosition.z);
   }
 

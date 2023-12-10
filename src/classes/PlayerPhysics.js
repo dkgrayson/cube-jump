@@ -28,7 +28,7 @@ export class PlayerPhysics {
         const shape = new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5));
         this.body = new CANNON.Body({
             mass: 1,
-            position: new CANNON.Vec3(0, 0, 0),
+            position: this.player.initPosition,
             shape: shape
         });
         world.addBody(this.body);
@@ -148,18 +148,19 @@ export class PlayerPhysics {
         this.body.torque.set(0, 0, 0);
     }
 
-    handleGameOver() {
-        if (this.player.mesh.position.y < -20) {
-            this.body.position.set(0, 0, 0);
-            this.isJumping = false;
-            this.resetMovement();
-            this.player.handleGameOver();
-        }
+    reset() {
+        this.isJumping = false;
+        this.updatePosition(this.player.initPosition, this.player.initQuaternion);
+        this.resetMovement();
     }
 
-    updatePosition() {
-        this.player.mesh.position.copy(this.body.position);
-        this.player.mesh.quaternion.copy(this.body.quaternion);
+    updatePosition(p, q) {
+        this.body.position.copy(p);
+        this.body.quaternion.copy(q);
+    }
+
+    handleGameOver() {
+        this.reset();
     }
 
     update() {
@@ -168,6 +169,5 @@ export class PlayerPhysics {
         this.updateHorizontalMovement();
         this.updateVeriticalMovement();
         this.player.updatePosition(this.body.position, this.body.quaternion);
-        this.handleGameOver();
     }
 }
