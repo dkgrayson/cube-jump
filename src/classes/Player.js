@@ -10,8 +10,8 @@ export class Player {
         this.width = 1;
         this.depth = 1;
         this.color = 0x003366;
-        this.initPosition = new THREE.Vector3(0, 10, 0); // Example starting position
-        this.initQuaternion = new THREE.Quaternion(); // Default quaternion
+        this.initPosition = new THREE.Vector3(0, 0, 0);
+        this.initQuaternion = new THREE.Quaternion()
         this.initGraphics();
         this.initPhysics();
     }
@@ -19,8 +19,17 @@ export class Player {
 
     initGraphics() {
         let geometry = new THREE.BoxGeometry(this.width, this.height, this.depth);
-        let material = new THREE.MeshBasicMaterial({ color: this.color });
-        this.mesh = new THREE.Mesh(geometry, material);
+
+        let materials = [
+            new THREE.MeshBasicMaterial({ color: 0xff0000 }), // red - front
+            new THREE.MeshBasicMaterial({ color: 0x0000ff }), // blue - back
+            new THREE.MeshBasicMaterial({ color: 0x00ff00 }), // green - top
+            new THREE.MeshBasicMaterial({ color: 0xffff00 }), // yellow - bottom
+            new THREE.MeshBasicMaterial({ color: 0xff00ff }), // magenta - right
+            new THREE.MeshBasicMaterial({ color: 0x00ffff })  // cyan - left
+        ];
+
+        this.mesh = new THREE.Mesh(geometry, materials);
         this.mesh.castShadow = true;
         this.mesh.receiveShadow = true;
         this.scene.add(this.mesh);

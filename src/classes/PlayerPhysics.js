@@ -53,19 +53,19 @@ export class PlayerPhysics {
 
     onKeyDown = (event) => {
         switch (event.keyCode) {
-            case 68: //d right
-                this.keys.right = true;
+            case 68: //d
+                this.keys.backwards = true;
                 break;
-            case 83: //s backwards
-                this.keys.backward = true;
-                break;
-            case 65: //a left
+            case 83: //s
                 this.keys.left = true;
                 break;
-            case 87: //w forwards
+            case 65: //a
                 this.keys.forward = true;
                 break;
-            case 32: //space jump
+            case 87: //w
+                this.keys.right = true;
+                break;
+            case 32: //space
                 if (this.isOnGround) {
                     this.keys.jump = true;
                 }
@@ -76,16 +76,16 @@ export class PlayerPhysics {
     onKeyUp = (event) => {
         switch (event.keyCode) {
             case 68:
-                this.keys.right = false;
+                this.keys.backwards = false;
                 break;
             case 83:
-                this.keys.backward = false;
-                break;
-            case 65:
                 this.keys.left = false;
                 break;
-            case 87:
+            case 65:
                 this.keys.forward = false;
+                break;
+            case 87:
+                this.keys.right = false;
                 break;
             case 32:
                 this.keys.jump = false;

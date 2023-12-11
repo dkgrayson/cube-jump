@@ -7,8 +7,8 @@ export class Camera {
         this.canvas = canvas;
         this.sensitivity = 0.005;
         this.cameraDistance = 10; // Distance from the player
-        this.theta = 0; // Horizontal angle
-        this.phi = Math.PI / 4; // Vertical angle, starting from above
+        this.theta = Math.PI;
+        this.phi = Math.PI / 3; // Vertical angle, starting from above
 
         this.mouse = {
             x: 0,
