@@ -145,7 +145,6 @@ export class Game {
 
   loadTitle(name, number) {
     let titleContainer = document.querySelector('.level');
-    console.log(titleContainer);
     let titleText = `Level ${number}: ${name}`;
     titleContainer.innerHTML = titleText;
   }

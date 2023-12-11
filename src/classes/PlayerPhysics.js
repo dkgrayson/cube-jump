@@ -12,12 +12,13 @@ export class PlayerPhysics {
     this.maxJumpHeight = 13.5;
     this.startJumpHeight = 0;
     this.isOnGround = true;
-    this.jumpSpeed = 20;
+    this.jumpSpeed = this.isMobile() ? 120 : 21;
     this.acceleration = 10;
     this.deceleration = 2;
     this.maxSpeed = 4;
     this.mobileAcceleration = 60;
     this.mobileMaxSpeed = 24;
+    this.mobileJumpSpeed = 120;
 
     this.keys = {
       left: false,
@@ -71,6 +72,11 @@ export class PlayerPhysics {
     this.isOnGround = true;
     this.isJumping = false;
   };
+
+  isMobile() {
+    console.log(window.innerWidth <= 962)
+    return window.innerWidth <= 962;
+  }
 
   onKeyDown (event) {
     switch (event.keyCode) {
