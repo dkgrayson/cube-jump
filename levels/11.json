@@ -1,0 +1,13 @@
+{
+  "name": "Twisted Towers",
+  "background": "0xADD8E6",
+  "platformColor": "0x87CEEB",
+  "platforms": [
+    { "x": 0, "y": -5, "z": 0, "width": 10, "depth": 10, "isFirst": true },
+    { "x": 15, "y": -3, "z": 10, "width": 7, "depth": 7 },
+    { "x": 30, "y": -1, "z": -10, "width": 7, "depth": 7 },
+    { "x": 45, "y": 1, "z": 10, "width": 7, "depth": 7 },
+    { "x": 60, "y": 3, "z": -10, "width": 7, "depth": 7 },
+    { "x": 75, "y": 5, "z": 10, "width": 7, "depth": 7, "isFinal": true }
+  ]
+}

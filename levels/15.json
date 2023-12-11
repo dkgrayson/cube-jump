@@ -1,0 +1,14 @@
+{
+  "name": "Circuitous Climb",
+  "background": "0x87CEEB",
+  "platformColor": "0x4682B4",
+  "platforms": [
+    { "x": 0, "y": -10, "z": 0, "width": 15, "depth": 15, "isFirst": true },
+    { "x": 20, "y": -6, "z": 15, "width": 10, "depth": 10 },
+    { "x": 40, "y": -2, "z": -15, "width": 10, "depth": 10 },
+    { "x": 60, "y": 2, "z": 15, "width": 8, "depth": 8 },
+    { "x": 80, "y": 6, "z": -15, "width": 8, "depth": 8 },
+    { "x": 100, "y": 10, "z": 15, "width": 6, "depth": 6 },
+    { "x": 120, "y": 14, "z": -15, "width": 6, "depth": 6, "isFinal": true }
+  ]
+}

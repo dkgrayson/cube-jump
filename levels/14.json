@@ -1,0 +1,13 @@
+{
+  "name": "Perilous Peaks",
+  "background": "0x90EE90",
+  "platformColor": "0x32CD32",
+  "platforms": [
+    { "x": 0, "y": -10, "z": 0, "width": 15, "depth": 15, "isFirst": true },
+    { "x": 20, "y": -5, "z": 10, "width": 12, "depth": 12 },
+    { "x": 40, "y": 0, "z": -10, "width": 10, "depth": 10 },
+    { "x": 60, "y": 5, "z": 10, "width": 8, "depth": 8 },
+    { "x": 80, "y": 10, "z": -10, "width": 6, "depth": 6 },
+    { "x": 100, "y": 15, "z": 10, "width": 4, "depth": 4, "isFinal": true }
+  ]
+}

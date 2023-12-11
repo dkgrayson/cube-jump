@@ -13,6 +13,11 @@ import level7 from '../../levels/7.json';
 import level8 from '../../levels/8.json';
 import level9 from '../../levels/9.json';
 import level10 from '../../levels/10.json';
+import level11 from '../../levels/11.json';
+import level12 from '../../levels/12.json';
+import level13 from '../../levels/13.json';
+import level14 from '../../levels/14.json';
+import level15 from '../../levels/15.json';
 
 export class Game {
   constructor() {
@@ -26,7 +31,12 @@ export class Game {
       level7,
       level8,
       level9,
-      level10
+      level10,
+      level11,
+      level12,
+      level13,
+      level14,
+      level15
     ]; //TODO: Move everything for levels to level class
     this.currentLevelIndex = 0;
     this.gameState = 'starting';
