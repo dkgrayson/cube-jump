@@ -3,6 +3,7 @@ import * as CANNON from 'cannon';
 import { Player } from './Player';
 import { Level } from './Level';
 import { Camera } from './Camera';
+import { Joystick } from './Joystick';
 import level1 from '../../levels/1.json';
 import level2 from '../../levels/2.json';
 import level3 from '../../levels/3.json';
@@ -52,9 +53,14 @@ export class Game {
     this.initRendender();
     this.initCamera();
     this.initLights();
+    this.initJoystick();
     this.loadLevel(this.currentLevelIndex);
     this.startTimer();
     this.animate();
+  }
+
+  initJoystick() {
+    this.joystick = new Joystick(this.handleJoystickMove.bind(this));
   }
 
   initScene() {
@@ -150,6 +156,10 @@ export class Game {
     this.gameState = 'gameOver';
     console.log('DEAD AGAIN');
     this.loadLevel(this.currentLevelIndex);
+  }
+
+  handleJoystickMove(dx, dy) {
+    this.player.physics.applyJoystickInput(dx, dy);
   }
 
   calculateDistance(start, end) {

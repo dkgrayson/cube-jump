@@ -27,6 +27,7 @@ export class PlayerPhysics {
 
     this.initBody();
     this.initListeners();
+    this.initMobile();
   }
 
   initBody() {
@@ -45,6 +46,18 @@ export class PlayerPhysics {
     this.body.addEventListener('collide', this.handleCollision);
     document.addEventListener('keydown', this.onKeyDown);
     document.addEventListener('keyup', this.onKeyUp);
+  }
+
+  initMobile() {
+    let jumpButton = document.getElementById('jump-button');
+    if (!jumpButton) return;
+
+    jumpButton.addEventListener('touchstart', () => {
+      this.keys.jump = true;
+    });
+    jumpButton.addEventListener('touchend', () => {
+      this.keys.jump = false;
+    });
   }
 
   handleCollision = (event) => {
@@ -148,6 +161,14 @@ export class PlayerPhysics {
     if (jumpDistance >= this.maxJumpHeight) {
       this.isJumping = false;
     }
+  }
+
+  applyJoystickInput(dx, dy) {
+    this.keys.right = dx > 0;
+    this.keys.left = dx < 0;
+    this.keys.backward = dy > 0;
+    this.keys.forward = dy < 0;
+    this.updateHorizontalMovement();
   }
 
   resetMovement() {
