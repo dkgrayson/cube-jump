@@ -4,7 +4,7 @@ export class Level {
     constructor(scene, world) {
         this.scene = scene;
         this.world = world;
-        this.objects = []; // Array to store level objects
+        this.objects = [];
         this.firstPlatform = null;
         this.finalPlatform = null;
     }
@@ -14,7 +14,7 @@ export class Level {
 
         levelData.platforms.forEach(p => {
             const platform = new Platform(this.scene, this.world, p, levelData.platformColor);
-            this.objects.push(platform); // Store reference to platform
+            this.objects.push(platform);
             if (p.isFinal) this.finalPlatform = platform;
             if (p.isFirst) this.firstPlatform = platform;
         });

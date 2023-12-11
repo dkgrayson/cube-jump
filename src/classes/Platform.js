@@ -12,7 +12,6 @@ export class Platform {
         this.isFirst = platform.isFirst;
         this.scene = scene;
         this.world = world;
-        this.isGround = true;
         this.color = new THREE.Color(parseInt(color, 16));
 
         const geometry = new THREE.BoxGeometry(this.width, 1, this.depth);
@@ -26,7 +25,8 @@ export class Platform {
         this.body = new CANNON.Body({
             mass: 0,
             position: new CANNON.Vec3(this.x, this.y, this.z),
-            shape: shape
+            shape: shape,
+            collisionFilterGroup: 1
         });
         this.world.addBody(this.body);
     }

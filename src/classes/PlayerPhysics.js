@@ -9,7 +9,7 @@ export class PlayerPhysics {
 
         this.velocity = new THREE.Vector3();
         this.isJumping = false;
-        this.maxJumpHeight = 7;
+        this.maxJumpHeight = 13.5;
         this.startJumpHeight = 0;
         this.isOnGround = true;
         this.jumpSpeed = 20;
@@ -33,7 +33,6 @@ export class PlayerPhysics {
         });
         world.addBody(this.body);
 
-
         this.onKeyDown = this.onKeyDown.bind(this);
         this.onKeyUp = this.onKeyUp.bind(this)
         this.body.addEventListener('collide', this.handleCollision);
@@ -43,14 +42,14 @@ export class PlayerPhysics {
 
     handleCollision = (event) => {
         let collidedBody = event.contact.bi === this.body ? event.contact.bj : event.contact.bi;
-        if (collidedBody.isGround) this.handleGroundCollision();
+        if (collidedBody.collisionFilterGroup === 1) this.handleGroundCollision();
     }
 
     handleGroundCollision() {
         this.isOnGround = true;
+        this.isJumping = false;
     };
 
-//THESE CONTROLS ARE FUCKED FIX THEM
     onKeyDown = (event) => {
         switch (event.keyCode) {
             case 68: //d
@@ -94,6 +93,17 @@ export class PlayerPhysics {
     }
 
     updateHorizontalMovement() {
+        this.accelerate()
+
+        if (!this.keys.left && !this.keys.right) {
+            this.body.velocity.z = this.decelerate(this.body.velocity.z, this.deceleration);
+        }
+        if (!this.keys.forward && !this.keys.backward) {
+            this.body.velocity.x = this.decelerate(this.body.velocity.x, this.deceleration);
+        }
+    }
+
+    accelerate() {
         let accelerationVec = new THREE.Vector3();
 
         if (this.keys.right) accelerationVec.z += this.acceleration;
@@ -101,42 +111,34 @@ export class PlayerPhysics {
         if (this.keys.backward) accelerationVec.x -= this.acceleration;
         if (this.keys.forward) accelerationVec.x += this.acceleration;
 
-        // Apply acceleration
         this.body.velocity.x += accelerationVec.x * this.world.fixedTimeStep;
         this.body.velocity.z += accelerationVec.z * this.world.fixedTimeStep;
-
-        // Clamp velocity to maximum speed
         this.body.velocity.x = THREE.MathUtils.clamp(this.body.velocity.x, -this.maxSpeed, this.maxSpeed);
         this.body.velocity.z = THREE.MathUtils.clamp(this.body.velocity.z, -this.maxSpeed, this.maxSpeed);
-
-        // Apply deceleration
-        const decelerate = (value, deceleration) => {
-            if (value !== 0) {
-                const dec = deceleration * this.world.fixedTimeStep;
-                return Math.abs(value) - dec > 0 ? value - Math.sign(value) * dec : 0;
-            }
-            return value;
-        };
-
-        if (!this.keys.left && !this.keys.right) {
-            this.body.velocity.z = decelerate(this.body.velocity.z, this.deceleration);
-        }
-        if (!this.keys.forward && !this.keys.backward) {
-            this.body.velocity.x = decelerate(this.body.velocity.x, this.deceleration);
-        }
     }
 
+    decelerate(value, deceleration) {
+        if (value !== 0) {
+            const dec = deceleration * this.world.fixedTimeStep;
+            return Math.abs(value) - dec > 0 ? value - Math.sign(value) * dec : 0;
+        }
+        return value;
+    }
 
     updateVeriticalMovement() {
-        if (this.keys.jump && this.isOnGround) {
-            if (!this.isJumping) {
-                this.startJumpHeight = this.player.mesh.position.y;
-                this.isJumping = true;
-            }
-            if (this.player.mesh.position.y - this.startJumpHeight < this.maxJumpHeight) {
-                this.body.applyForce(new CANNON.Vec3(0, this.jumpSpeed, 0), this.body.position);
-            }
-        } else if (this.isJumping) {
+        if (this.keys.jump && this.isOnGround && !this.isJumping) {
+            this.startJumpHeight = this.player.mesh.position.y;
+            this.isOnGround = false;
+            this.isJumping = true;
+        }
+
+        let jumpDistance = this.player.mesh.position.y - this.startJumpHeight
+
+        if (this.keys.jump && this.isJumping && jumpDistance < this.maxJumpHeight) {
+            this.body.applyForce(new CANNON.Vec3(0, this.jumpSpeed, 0), this.body.position);
+        }
+
+        if (jumpDistance >= this.maxJumpHeight) {
             this.isJumping = false;
         }
     }

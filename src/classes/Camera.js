@@ -6,9 +6,9 @@ export class Camera {
         this.camera.position.set(0, 5, 10);
         this.canvas = canvas;
         this.sensitivity = 0.005;
-        this.cameraDistance = 10; // Distance from the player
+        this.cameraDistance = 10;
         this.theta = Math.PI;
-        this.phi = Math.PI / 3; // Vertical angle, starting from above
+        this.phi = Math.PI / 3;
 
         this.mouse = {
             x: 0,
@@ -25,13 +25,11 @@ export class Camera {
         canvas.addEventListener('mouseout', () => { this.isMouseDown = false; });
     }
 
-    onMouseMove(event) {
+    onMouseMove(event) {        ``
         if (!this.isMouseDown) return;
 
         this.mouse.dx = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
         this.mouse.dy = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
-
-        // Adjust theta and phi based on mouse movement
         this.theta -= this.mouse.dx * this.sensitivity;
         this.phi = Math.max(0.1, Math.min(Math.PI - 0.1, this.phi - this.mouse.dy * this.sensitivity));
     }
@@ -59,7 +57,6 @@ export class Camera {
         this.camera.position.x = player.mesh.position.x + this.cameraDistance * Math.sin(this.phi) * Math.cos(this.theta);
         this.camera.position.y = player.mesh.position.y + this.cameraDistance * Math.cos(this.phi);
         this.camera.position.z = player.mesh.position.z + this.cameraDistance * Math.sin(this.phi) * Math.sin(this.theta);
-
         this.camera.lookAt(player.mesh.position);
     }
 }
