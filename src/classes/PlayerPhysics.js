@@ -50,20 +50,20 @@ export class PlayerPhysics {
         this.isOnGround = true;
     };
 
-
+//THESE CONTROLS ARE FUCKED FIX THEM
     onKeyDown = (event) => {
         switch (event.keyCode) {
             case 68: //d
-                this.keys.backwards = true;
+                this.keys.right = true;
                 break;
             case 83: //s
-                this.keys.left = true;
+                this.keys.backward = true;
                 break;
             case 65: //a
-                this.keys.forward = true;
+                this.keys.left = true;
                 break;
             case 87: //w
-                this.keys.right = true;
+                this.keys.forward = true;
                 break;
             case 32: //space
                 if (this.isOnGround) {
@@ -76,16 +76,16 @@ export class PlayerPhysics {
     onKeyUp = (event) => {
         switch (event.keyCode) {
             case 68:
-                this.keys.backwards = false;
+                this.keys.right = false;
                 break;
             case 83:
-                this.keys.left = false;
+                this.keys.backward = false;
                 break;
             case 65:
-                this.keys.forward = false;
+                this.keys.left = false;
                 break;
             case 87:
-                this.keys.right = false;
+                this.keys.forward = false;
                 break;
             case 32:
                 this.keys.jump = false;
@@ -96,10 +96,10 @@ export class PlayerPhysics {
     updateHorizontalMovement() {
         let accelerationVec = new THREE.Vector3();
 
-        if (this.keys.right) accelerationVec.x += this.acceleration;
-        if (this.keys.left) accelerationVec.x -= this.acceleration;
-        if (this.keys.forward) accelerationVec.z -= this.acceleration;
-        if (this.keys.backward) accelerationVec.z += this.acceleration;
+        if (this.keys.right) accelerationVec.z += this.acceleration;
+        if (this.keys.left) accelerationVec.z -= this.acceleration;
+        if (this.keys.backward) accelerationVec.x -= this.acceleration;
+        if (this.keys.forward) accelerationVec.x += this.acceleration;
 
         // Apply acceleration
         this.body.velocity.x += accelerationVec.x * this.world.fixedTimeStep;
@@ -119,10 +119,10 @@ export class PlayerPhysics {
         };
 
         if (!this.keys.left && !this.keys.right) {
-            this.body.velocity.x = decelerate(this.body.velocity.x, this.deceleration);
+            this.body.velocity.z = decelerate(this.body.velocity.z, this.deceleration);
         }
         if (!this.keys.forward && !this.keys.backward) {
-            this.body.velocity.z = decelerate(this.body.velocity.z, this.deceleration);
+            this.body.velocity.x = decelerate(this.body.velocity.x, this.deceleration);
         }
     }
 
