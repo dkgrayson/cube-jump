@@ -42,6 +42,8 @@ export class Game {
     this.gameState = 'starting';
     this.loadingLevel = false;
     this.fixedTimeStep = 1 / 60;
+    this.timer = 0;
+    this.timerInterval = null;
     this.init();
   }
 
@@ -51,6 +53,7 @@ export class Game {
     this.initCamera();
     this.initLights();
     this.loadLevel(this.currentLevelIndex);
+    this.startTimer();
     this.animate();
   }
 
@@ -73,7 +76,6 @@ export class Game {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    document.body.innerHTML = '';
     document.body.appendChild(this.renderer.domElement);
   }
 
@@ -84,12 +86,38 @@ export class Game {
     this.scene.add(directionalLight);
   }
 
+  startTimer() {
+    this.timer = 0;
+    this.updateTimerDisplay();
+    this.timerInterval = setInterval(() => {
+      this.timer++;
+      this.updateTimerDisplay();
+    }, 1000);
+  }
+
+  stopTimer() {
+    clearInterval(this.timerInterval);
+  }
+
+  resetTimer() {
+    this.stopTimer();
+    this.timer = 0;
+    this.updateTimerDisplay();
+  }
+
+  updateTimerDisplay() {
+    const minutes = Math.floor(this.timer / 60).toString().padStart(2, '0');
+    const seconds = (this.timer % 60).toString().padStart(2, '0');
+    document.querySelector('.timer').innerText = `Time: ${minutes}:${seconds}`;
+  }
+
   loadLevel(levelIndex) {
     if (this.loadingLevel) return;
     this.loadingLevel = true;
 
     if (levelIndex >= this.levels.length) {
       this.gameState = 'win';
+      this.stopTimer();
       alert('You win!');
       return;
     }
@@ -98,15 +126,22 @@ export class Game {
 
     this.levelData = this.levels[levelIndex];
     this.currentLevel = new Level(this.scene, this.world);
-    this.currentLevel.loadLevel(this.levelData);
+    this.currentLevel.loadLevel(this.levelData, levelIndex);
 
     if (this.levelData.background) {
       let bgColor = parseInt(this.levelData.background, 16);
       this.scene.background = new THREE.Color(bgColor);
     }
-
+    this.loadTitle(this.levelData.name, levelIndex + 1);
     this.gameState = 'playing';
     this.loadingLevel = false;
+  }
+
+  loadTitle(name, number) {
+    let titleContainer = document.querySelector('.level');
+    console.log(titleContainer);
+    let titleText = `Level ${number}: ${name}`;
+    titleContainer.innerHTML = titleText;
   }
 
   handleGameOver() {
