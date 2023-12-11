@@ -54,7 +54,7 @@ export class Game {
   }
 
   initCamera() {
-    const canvas = this.renderer.domElement;
+    let canvas = this.renderer.domElement;
     this.cameraController = new Camera(canvas);
   }
 
@@ -68,7 +68,7 @@ export class Game {
   }
 
   initLights() {
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    let directionalLight = new THREE.DirectionalLight(0xffffff, 1);
     directionalLight.position.set(10, 10, 10);
     directionalLight.castShadow = true;
     this.scene.add(directionalLight);
@@ -79,9 +79,9 @@ export class Game {
     this.loadingLevel = true;
 
     if (levelIndex >= this.levels.length) {
-        this.gameState = 'win';
-        alert('You win!');
-        return;
+      this.gameState = 'win';
+      alert('You win!');
+      return;
     }
 
     if (this.currentLevel) this.currentLevel.clearLevel();
@@ -91,21 +91,12 @@ export class Game {
     this.currentLevel.loadLevel(this.levelData);
 
     if (this.levelData.background) {
-        const bgColor = parseInt(this.levelData.background, 16);
-        this.scene.background = new THREE.Color(bgColor);
+      const bgColor = parseInt(this.levelData.background, 16);
+      this.scene.background = new THREE.Color(bgColor);
     }
 
-    if (this.player && this.player.physics) this.player.physics.resetMovement();
     this.gameState = 'playing';
     this.loadingLevel = false;
-  }
-
-  resetPlayerPosition(firstPlatform) { // TODO: Move player controls to player
-    let platformPosition = firstPlatform.mesh.position;
-    let playerHeight = this.player.height;
-
-    this.player.mesh.position.copy(platformPosition.x, platformPosition.y + playerHeight, platformPosition.z);
-    this.player.physics.body.position.set(platformPosition.x, platformPosition.y + playerHeight, platformPosition.z);
   }
 
   handleGameOver() {
@@ -132,24 +123,10 @@ export class Game {
   incrementLevel() {
     this.currentLevelIndex++;
     this.loadLevel(this.currentLevelIndex);
-    this.resetPlayerPosition(this.currentLevel.firstPlatform);
   }
 
-  checkLevelCompletion() {
-    if (this.gameState !== 'playing') return;
-    if (!this.currentLevel.finalPlatform) return;
-
-    let [horizontalDistance, verticalDistance] = this.calculateDistance(
-      this.player.mesh.position,
-      this.currentLevel.finalPlatform.mesh.position
-    );
-
-    let horizontalThreshold = 5;
-    let verticalThreshold = this.player.height;
-
-    if (horizontalDistance <= horizontalThreshold && verticalDistance <= verticalThreshold) {
-      this.incrementLevel();
-    }
+  handleLevelCompletion() {
+    this.incrementLevel();
   }
 
   animate = () => {
@@ -157,7 +134,6 @@ export class Game {
     this.world.step(this.fixedTimeStep);
     this.player.update();
     this.cameraController.update(this.player);
-    this.checkLevelCompletion();
     this.renderer.render(this.scene, this.cameraController.camera);
     requestAnimationFrame(this.animate);
   }
