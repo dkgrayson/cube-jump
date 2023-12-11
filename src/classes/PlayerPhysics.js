@@ -9,16 +9,15 @@ export class PlayerPhysics {
 
     this.velocity = new THREE.Vector3();
     this.isJumping = false;
-    this.maxJumpHeight = 13.5;
+    this.maxJumpHeight = 6;
     this.startJumpHeight = 0;
     this.isOnGround = true;
-    this.jumpSpeed = this.isMobile() ? 120 : 21;
-    this.acceleration = 10;
-    this.deceleration = 2;
+    this.jumpSpeed = this.isMobile() ? 120 : 50 ;
+    this.acceleration = 13;
+    this.deceleration = 4;
     this.maxSpeed = 4;
     this.mobileAcceleration = 60;
     this.mobileMaxSpeed = 24;
-    this.mobileJumpSpeed = 120;
 
     this.keys = {
       left: false,
