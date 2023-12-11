@@ -74,7 +74,6 @@ export class PlayerPhysics {
   };
 
   isMobile() {
-    console.log(window.innerWidth <= 962)
     return window.innerWidth <= 962;
   }
 
