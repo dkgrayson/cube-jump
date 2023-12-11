@@ -13,6 +13,7 @@ export class Joystick {
   }
 
   handleStart(event) {
+    event.preventDefault();
     this.isTouching = true;
     this.startPosition = {
       x: event.touches[0].clientX - this.joystickContainer.offsetLeft,
@@ -22,6 +23,7 @@ export class Joystick {
   }
 
   handleMove(event) {
+    event.preventDefault();
     if (!this.isTouching) return;
     this.currentPosition = {
       x: event.touches[0].clientX - this.joystickContainer.offsetLeft,
@@ -38,7 +40,8 @@ export class Joystick {
     if (this.onMove) this.onMove(dx, dy);
   }
 
-  handleEnd() {
+  handleEnd(event) {
+    event.preventDefault();
     this.isTouching = false;
     this.joystick.style.transition = '0.2s';
     this.joystick.style.transform = 'translate(0px, 0px)';
