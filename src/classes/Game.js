@@ -94,8 +94,7 @@ export class Game {
         const bgColor = parseInt(this.levelData.background, 16);
         this.scene.background = new THREE.Color(bgColor);
     }
-    let firstPlatform = this.currentLevel.firstPlatform;
-    // if (firstPlatform) this.resetPlayerPosition(firstPlatform);
+
     if (this.player && this.player.physics) this.player.physics.resetMovement();
     this.gameState = 'playing';
     this.loadingLevel = false;
@@ -117,23 +116,39 @@ export class Game {
     this.loadLevel(this.currentLevelIndex);
   }
 
+  calculateDistance(start, end) {
+    return [new THREE.Vector2(
+      start.x,
+      start.z
+    ).distanceTo(
+      new THREE.Vector2(
+        end.x,
+        end.z
+      )
+    ),
+    Math.abs(start.y - end.y)];
+  }
+
+  incrementLevel() {
+    this.currentLevelIndex++;
+    this.loadLevel(this.currentLevelIndex);
+    this.resetPlayerPosition(this.currentLevel.firstPlatform);
+  }
+
   checkLevelCompletion() {
     if (this.gameState !== 'playing') return;
+    if (!this.currentLevel.finalPlatform) return;
 
-    if (this.currentLevel.finalPlatform) {
-        const playerPos = this.player.mesh.position;
-        const platformPos = this.currentLevel.finalPlatform.mesh.position;
-        const horizontalDistance = new THREE.Vector2(playerPos.x, playerPos.z).distanceTo(new THREE.Vector2(platformPos.x, platformPos.z));
-        const verticalDistance = Math.abs(playerPos.y - platformPos.y);
+    let [horizontalDistance, verticalDistance] = this.calculateDistance(
+      this.player.mesh.position,
+      this.currentLevel.finalPlatform.mesh.position
+    );
 
-        // Define thresholds for completion
-        const horizontalThreshold = 5; // Horizontal distance threshold
-        const verticalThreshold = 1; // Vertical distance threshold (e.g., the height of the player)
+    let horizontalThreshold = 5;
+    let verticalThreshold = this.player.height;
 
-        if (horizontalDistance <= horizontalThreshold && verticalDistance <= verticalThreshold) {
-            this.currentLevelIndex++;
-            this.loadLevel(this.currentLevelIndex);
-        }
+    if (horizontalDistance <= horizontalThreshold && verticalDistance <= verticalThreshold) {
+      this.incrementLevel();
     }
   }
 
