@@ -91,7 +91,7 @@ export class Game {
     this.currentLevel.loadLevel(this.levelData);
 
     if (this.levelData.background) {
-      const bgColor = parseInt(this.levelData.background, 16);
+      let bgColor = parseInt(this.levelData.background, 16);
       this.scene.background = new THREE.Color(bgColor);
     }
 

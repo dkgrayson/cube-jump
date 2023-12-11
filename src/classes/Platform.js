@@ -14,6 +14,11 @@ export class Platform {
     this.world = world;
     this.color = new THREE.Color(parseInt(color, 16));
 
+    this.initGraphics();
+    this.initBody();
+  }
+
+  initGraphics() {
     let geometry = new THREE.BoxGeometry(this.width, 1, this.depth);
     let material = new THREE.MeshBasicMaterial({ color: this.color });
     this.mesh = new THREE.Mesh(geometry, material);
@@ -21,6 +26,9 @@ export class Platform {
     this.mesh.receiveShadow = true;
     this.mesh.position.set(this.x, this.y, this.z);
     this.scene.add(this.mesh);
+  }
+
+  initBody() {
     let shape = new CANNON.Box(new CANNON.Vec3(this.width / 2, 0.5, this.depth / 2));
     this.body = new CANNON.Body({
       mass: 0,

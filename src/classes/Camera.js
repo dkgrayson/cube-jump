@@ -9,6 +9,7 @@ export class Camera {
     this.cameraDistance = 10;
     this.theta = Math.PI;
     this.phi = Math.PI / 3;
+    this.isMouseDown = false;
 
     this.mouse = {
       x: 0,
@@ -18,14 +19,10 @@ export class Camera {
     };
 
     this.initPointerLock();
-    this.isMouseDown = false;
-
-    canvas.addEventListener('mousedown', () => { this.isMouseDown = true; });
-    canvas.addEventListener('mouseup', () => { this.isMouseDown = false; });
-    canvas.addEventListener('mouseout', () => { this.isMouseDown = false; });
+    this.initListeners();
   }
 
-  onMouseMove(event) {        ``
+  onMouseMove(event) {
     if (!this.isMouseDown) return;
 
     this.mouse.dx = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
@@ -51,6 +48,12 @@ export class Camera {
     } else {
       document.removeEventListener('mousemove', this.onMouseMove.bind(this));
     }
+  }
+
+  initListeners() {
+    this.canvas.addEventListener('mousedown', () => { this.isMouseDown = true; });
+    this.canvas.addEventListener('mouseup', () => { this.isMouseDown = false; });
+    this.canvas.addEventListener('mouseout', () => { this.isMouseDown = false; });
   }
 
   update(player) {

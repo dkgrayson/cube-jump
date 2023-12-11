@@ -13,7 +13,7 @@ export class Level {
     this.clearLevel();
 
     levelData.platforms.forEach(p => {
-      const platform = new Platform(this.scene, this.world, p, levelData.platformColor);
+      let platform = new Platform(this.scene, this.world, p, levelData.platformColor);
       this.objects.push(platform);
       if (p.isFinal) this.finalPlatform = platform;
       if (p.isFirst) this.firstPlatform = platform;

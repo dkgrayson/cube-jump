@@ -18,21 +18,28 @@ export class PlayerPhysics {
     this.maxSpeed = 4;
 
     this.keys = {
-        left: false,
-        right: false,
-        forward: false,
-        backward: false,
-        jump: false
+      left: false,
+      right: false,
+      forward: false,
+      backward: false,
+      jump: false
     };
 
-    const shape = new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5));
-    this.body = new CANNON.Body({
-        mass: 1,
-        position: this.player.initPosition,
-        shape: shape
-    });
-    world.addBody(this.body);
+    this.initBody();
+    this.initListeners();
+  }
 
+  initBody() {
+    let shape = new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5));
+    this.body = new CANNON.Body({
+      mass: 1,
+      position: this.player.initPosition,
+      shape: shape
+    });
+    this.world.addBody(this.body);
+  }
+
+  initListeners() {
     this.onKeyDown = this.onKeyDown.bind(this);
     this.onKeyUp = this.onKeyUp.bind(this)
     this.body.addEventListener('collide', this.handleCollision);
@@ -41,35 +48,35 @@ export class PlayerPhysics {
   }
 
   handleCollision = (event) => {
-      let collidedBody = event.contact.bi === this.body ? event.contact.bj : event.contact.bi;
-      if (collidedBody.collisionFilterGroup === 1) this.handleGroundCollision();
+    let collidedBody = event.contact.bi === this.body ? event.contact.bj : event.contact.bi;
+    if (collidedBody.collisionFilterGroup === 1) this.handleGroundCollision();
   }
 
   handleGroundCollision() {
-      this.isOnGround = true;
-      this.isJumping = false;
+    this.isOnGround = true;
+    this.isJumping = false;
   };
 
   onKeyDown = (event) => {
-      switch (event.keyCode) {
-          case 68: //d
-              this.keys.right = true;
-              break;
-          case 83: //s
-              this.keys.backward = true;
-              break;
-          case 65: //a
-              this.keys.left = true;
-              break;
-          case 87: //w
-              this.keys.forward = true;
-              break;
-          case 32: //space
-              if (this.isOnGround) {
-                  this.keys.jump = true;
-              }
-              break;
-      }
+    switch (event.keyCode) {
+      case 68: //d
+        this.keys.right = true;
+        break;
+      case 83: //s
+        this.keys.backward = true;
+        break;
+      case 65: //a
+        this.keys.left = true;
+        break;
+      case 87: //w
+        this.keys.forward = true;
+        break;
+      case 32: //space
+        if (this.isOnGround) {
+            this.keys.jump = true;
+        }
+        break;
+    }
   }
 
   onKeyUp = (event) => {
@@ -118,29 +125,29 @@ export class PlayerPhysics {
   }
 
   decelerate(value, deceleration) {
-      if (value !== 0) {
-        const dec = deceleration * this.world.fixedTimeStep;
-        return Math.abs(value) - dec > 0 ? value - Math.sign(value) * dec : 0;
-      }
-      return value;
+    if (value !== 0) {
+      let dec = deceleration * this.world.fixedTimeStep;
+      return Math.abs(value) - dec > 0 ? value - Math.sign(value) * dec : 0;
+    }
+    return value;
   }
 
   updateVeriticalMovement() {
-      if (this.keys.jump && this.isOnGround && !this.isJumping) {
-        this.startJumpHeight = this.player.mesh.position.y;
-        this.isOnGround = false;
-        this.isJumping = true;
-      }
+    if (this.keys.jump && this.isOnGround && !this.isJumping) {
+      this.startJumpHeight = this.player.mesh.position.y;
+      this.isOnGround = false;
+      this.isJumping = true;
+    }
 
-      let jumpDistance = this.player.mesh.position.y - this.startJumpHeight
+    let jumpDistance = this.player.mesh.position.y - this.startJumpHeight
 
-      if (this.keys.jump && this.isJumping && jumpDistance < this.maxJumpHeight) {
-        this.body.applyForce(new CANNON.Vec3(0, this.jumpSpeed, 0), this.body.position);
-      }
+    if (this.keys.jump && this.isJumping && jumpDistance < this.maxJumpHeight) {
+      this.body.applyForce(new CANNON.Vec3(0, this.jumpSpeed, 0), this.body.position);
+    }
 
-      if (jumpDistance >= this.maxJumpHeight) {
-        this.isJumping = false;
-      }
+    if (jumpDistance >= this.maxJumpHeight) {
+      this.isJumping = false;
+    }
   }
 
   resetMovement() {
@@ -151,18 +158,18 @@ export class PlayerPhysics {
   }
 
   reset() {
-      this.isJumping = false;
-      this.updatePosition(this.player.initPosition, this.player.initQuaternion);
-      this.resetMovement();
+    this.isJumping = false;
+    this.updatePosition(this.player.initPosition, this.player.initQuaternion);
+    this.resetMovement();
   }
 
   updatePosition(p, q) {
-      this.body.position.copy(p);
-      this.body.quaternion.copy(q);
+    this.body.position.copy(p);
+    this.body.quaternion.copy(q);
   }
 
   handleGameOver() {
-      this.reset();
+    this.reset();
   }
 
   handleLevelCompletion() {
@@ -170,10 +177,10 @@ export class PlayerPhysics {
   }
 
   update() {
-      this.velocity.x = 0;
-      this.velocity.z = 0;
-      this.updateHorizontalMovement();
-      this.updateVeriticalMovement();
-      this.player.updatePosition(this.body.position, this.body.quaternion);
+    this.velocity.x = 0;
+    this.velocity.z = 0;
+    this.updateHorizontalMovement();
+    this.updateVeriticalMovement();
+    this.player.updatePosition(this.body.position, this.body.quaternion);
   }
 }
