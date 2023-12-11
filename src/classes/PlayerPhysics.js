@@ -16,6 +16,8 @@ export class PlayerPhysics {
     this.acceleration = 10;
     this.deceleration = 2;
     this.maxSpeed = 4;
+    this.mobileAcceleration = 60;
+    this.mobileMaxSpeed = 24;
 
     this.keys = {
       left: false,
@@ -113,7 +115,7 @@ export class PlayerPhysics {
   }
 
   updateHorizontalMovement() {
-    this.accelerate()
+    this.accelerate(this.acceleration, this.maxSpeed);
 
     if (!this.keys.left && !this.keys.right) {
       this.body.velocity.z = this.decelerate(this.body.velocity.z, this.deceleration);
@@ -123,18 +125,18 @@ export class PlayerPhysics {
     }
   }
 
-  accelerate() {
+  accelerate(acceleration, maxSpeed) {
     let accelerationVec = new THREE.Vector3();
 
-    if (this.keys.right) accelerationVec.z += this.acceleration;
-    if (this.keys.left) accelerationVec.z -= this.acceleration;
-    if (this.keys.backward) accelerationVec.x -= this.acceleration;
-    if (this.keys.forward) accelerationVec.x += this.acceleration;
+    if (this.keys.right) accelerationVec.z += acceleration;
+    if (this.keys.left) accelerationVec.z -= acceleration;
+    if (this.keys.backward) accelerationVec.x -= acceleration;
+    if (this.keys.forward) accelerationVec.x += acceleration;
 
     this.body.velocity.x += accelerationVec.x * this.world.fixedTimeStep;
     this.body.velocity.z += accelerationVec.z * this.world.fixedTimeStep;
-    this.body.velocity.x = THREE.MathUtils.clamp(this.body.velocity.x, -this.maxSpeed, this.maxSpeed);
-    this.body.velocity.z = THREE.MathUtils.clamp(this.body.velocity.z, -this.maxSpeed, this.maxSpeed);
+    this.body.velocity.x = THREE.MathUtils.clamp(this.body.velocity.x, -maxSpeed, maxSpeed);
+    this.body.velocity.z = THREE.MathUtils.clamp(this.body.velocity.z, -maxSpeed, maxSpeed);
   }
 
   decelerate(value, deceleration) {
@@ -168,7 +170,7 @@ export class PlayerPhysics {
     this.keys.left = dx < 0;
     this.keys.backward = dy > 0;
     this.keys.forward = dy < 0;
-    this.updateHorizontalMovement();
+    this.accelerate(this.mobileAcceleration, this.mobileMaxSpeed);
   }
 
   resetMovement() {
