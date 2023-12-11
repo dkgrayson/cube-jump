@@ -57,7 +57,7 @@ export class PlayerPhysics {
     this.isJumping = false;
   };
 
-  onKeyDown = (event) => {
+  onKeyDown (event) {
     switch (event.keyCode) {
       case 68: //d
         this.keys.right = true;
@@ -79,7 +79,7 @@ export class PlayerPhysics {
     }
   }
 
-  onKeyUp = (event) => {
+  onKeyUp (event) {
     switch (event.keyCode) {
       case 68:
         this.keys.right = false;
