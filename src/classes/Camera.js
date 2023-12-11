@@ -6,6 +6,9 @@ export class Camera {
         this.camera.position.set(0, 5, 10);
         this.canvas = canvas;
         this.sensitivity = 0.005;
+        this.cameraDistance = 10; // Distance from the player
+        this.theta = 0; // Horizontal angle
+        this.phi = Math.PI / 4; // Vertical angle, starting from above
 
         this.mouse = {
             x: 0,
@@ -25,27 +28,13 @@ export class Camera {
     onMouseMove(event) {
         if (!this.isMouseDown) return;
 
-        const movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
-        const movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
+        this.mouse.dx = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
+        this.mouse.dy = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
 
-        this.mouse.dx += movementX;
-        this.mouse.dy += movementY;
-        this.updateCameraOrientation();
+        // Adjust theta and phi based on mouse movement
+        this.theta -= this.mouse.dx * this.sensitivity;
+        this.phi = Math.max(0.1, Math.min(Math.PI - 0.1, this.phi - this.mouse.dy * this.sensitivity));
     }
-
-    updateCameraOrientation() {
-        this.camera.rotation.y -= this.mouse.dx * this.sensitivity;
-        this.camera.rotation.x -= this.mouse.dy * this.sensitivity;
-        this.camera.rotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, this.camera.rotation.x));
-
-        this.mouse.dx = 0;
-        this.mouse.dy = 0;
-
-        const direction = new THREE.Vector3();
-        this.camera.getWorldDirection(direction);
-        this.camera.lookAt(direction.add(this.camera.position));
-    }
-
 
     initPointerLock() {
         this.canvas.addEventListener('click', () => {
@@ -67,10 +56,10 @@ export class Camera {
     }
 
     update(player) {
-        this.camera.position.x = player.mesh.position.x;
-        this.camera.position.y = player.mesh.position.y + 5;
-        this.camera.position.z = player.mesh.position.z + 10;
+        this.camera.position.x = player.mesh.position.x + this.cameraDistance * Math.sin(this.phi) * Math.cos(this.theta);
+        this.camera.position.y = player.mesh.position.y + this.cameraDistance * Math.cos(this.phi);
+        this.camera.position.z = player.mesh.position.z + this.cameraDistance * Math.sin(this.phi) * Math.sin(this.theta);
 
-        if (!this.isMouseDown) this.camera.lookAt(player.mesh.position);
+        this.camera.lookAt(player.mesh.position);
     }
 }
