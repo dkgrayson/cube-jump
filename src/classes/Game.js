@@ -39,7 +39,7 @@ export class Game {
       level14,
       level15
     ]; //TODO: Move everything for levels to level class
-    this.currentLevelIndex = 11;
+    this.currentLevelIndex = 0;
     this.gameState = 'starting';
     this.loadingLevel = false;
     this.fixedTimeStep = 1 / 120;
@@ -189,6 +189,13 @@ export class Game {
     this.world.step(this.fixedTimeStep);
     this.player.update();
     this.cameraController.update(this.player);
+    const deltaTime = performance.now() / 1000;
+    if (this.currentLevel && this.currentLevel.objects && this.currentLevel.objects.length > 0) {
+      const deltaTime = performance.now() / 1000;
+      this.currentLevel.objects.forEach(o => {
+        o.update(deltaTime);
+      });
+    }
     this.renderer.render(this.scene, this.cameraController.camera);
     requestAnimationFrame(this.animate);
   }

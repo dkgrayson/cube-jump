@@ -4,7 +4,7 @@
   "platformColor": "0x1E90FF",
   "platforms": [
     { "x": 0, "y": -10, "z": 0, "width": 15, "depth": 15, "isFirst": true },
-    { "x": 25, "y": -5, "z": 0, "width": 10, "depth": 10 },
+    { "x": 25, "y": -5, "z": 0, "width": 10, "depth": 10, "moveSpeed": 2, "moveAxis": "x", "moveRange": 5 },
     { "x": 50, "y": 0, "z": 0, "width": 5, "depth": 5, "isFinal": true }
   ]
 }

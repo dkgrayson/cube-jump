@@ -5,6 +5,6 @@
   "platforms": [
     { "x": 0, "y": -5, "z": 0, "width": 10, "depth": 10, "isFirst": true },
     { "x": 30, "y": 0, "z": 0, "width": 5, "depth": 5 },
-    { "x": 60, "y": 5, "z": 0, "width": 10, "depth": 10, "isFinal": true }
+    { "x": 60, "y": 5, "z": 0, "width": 10, "depth": 10, "isFinal": true, "moveSpeed": 2, "moveAxis": "z", "moveRange": 5 }
   ]
 }

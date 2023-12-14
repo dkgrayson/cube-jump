@@ -10,6 +10,13 @@ export class Platform {
     this.depth = platform.depth;
     this.isFinal = platform.isFinal;
     this.isFirst = platform.isFirst;
+    this.moveRange = platform.moveRange;
+    this.moveSpeed = platform.moveSpeed;
+    this.moveAxis = platform.moveAxis;
+    this.initialX = this.x;
+    this.initialY = this.y;
+    this.initialZ = this.z;
+    this.direction = 1;
     this.scene = scene;
     this.world = world;
     this.color = new THREE.Color(parseInt(color, 16));
@@ -37,5 +44,31 @@ export class Platform {
       collisionFilterGroup: 1
     });
     this.world.addBody(this.body);
+  }
+
+  update(deltaTime) {
+    if (this.moveRange > 0 && this.moveSpeed > 0 && this.moveAxis) {
+      let moveOffset = Math.sin(deltaTime * this.moveSpeed) * this.moveRange;
+
+      switch (this.moveAxis) {
+        case 'x':
+          this.x = this.initialX + moveOffset;
+          this.mesh.position.x = this.x;
+          this.body.position.x = this.x;
+          break;
+        case 'y':
+          this.y = this.initialY + moveOffset;
+          this.mesh.position.y = this.y;
+          this.body.position.y = this.y;
+          break;
+        case 'z':
+          this.z = this.initialZ + moveOffset;
+          this.mesh.position.z = this.z;
+          this.body.position.z = this.z;
+          break;
+        default:
+          break;
+      }
+    }
   }
 }
