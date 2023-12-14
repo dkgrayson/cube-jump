@@ -39,7 +39,7 @@ export class Game {
       level14,
       level15
     ]; //TODO: Move everything for levels to level class
-    this.currentLevelIndex = 4;
+    this.currentLevelIndex = 11;
     this.gameState = 'starting';
     this.loadingLevel = false;
     this.fixedTimeStep = 1 / 120;
@@ -78,7 +78,7 @@ export class Game {
   }
 
   initRendender() {
-    this.renderer = new THREE.WebGLRenderer();
+    this.renderer = new THREE.WebGLRenderer({ antialias: true });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -139,6 +139,7 @@ export class Game {
       this.scene.background = new THREE.Color(bgColor);
     }
     this.loadTitle(this.levelData.name, levelIndex + 1);
+    this.player.reset();
     this.gameState = 'playing';
     this.loadingLevel = false;
   }

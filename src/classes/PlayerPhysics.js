@@ -12,12 +12,10 @@ export class PlayerPhysics {
     this.maxJumpHeight = 7;
     this.startJumpHeight = 0;
     this.isOnGround = true;
-    this.jumpSpeed = this.isMobile() ? 120 : 20 ;
-    this.acceleration = 10;
-    this.deceleration = 2;
-    this.maxSpeed = 8;
-    this.mobileAcceleration = 60;
-    this.mobileMaxSpeed = 24;
+    this.jumpSpeed = 3;
+    this.acceleration = 13;
+    this.deceleration = 5;
+    this.maxSpeed = 6;
 
     this.keys = {
       left: false,
@@ -151,21 +149,19 @@ export class PlayerPhysics {
     return value;
   }
 
-  updateVeriticalMovement() {
+  updateVerticalMovement() {
     if (this.keys.jump && this.isOnGround && !this.isJumping) {
       this.startJumpHeight = this.player.mesh.position.y;
       this.isOnGround = false;
       this.isJumping = true;
     }
-
-    let jumpDistance = this.player.mesh.position.y - this.startJumpHeight
-
-    if (this.keys.jump && this.isJumping && jumpDistance < this.maxJumpHeight) {
-      this.body.applyForce(new CANNON.Vec3(0, this.jumpSpeed, 0), this.body.position);
-    }
-
-    if (jumpDistance >= this.maxJumpHeight) {
-      this.isJumping = false;
+    if (this.isJumping && this.keys.jump) {
+      let jumpIncrement = Math.sqrt(2 * this.jumpSpeed * this.world.fixedTimeStep);
+      if (this.player.mesh.position.y - this.startJumpHeight < this.maxJumpHeight) {
+        this.body.velocity.y += jumpIncrement;
+      } else {
+        this.isJumping = false;
+      }
     }
   }
 
@@ -174,7 +170,7 @@ export class PlayerPhysics {
     this.keys.left = dx < 0;
     this.keys.backward = dy > 0;
     this.keys.forward = dy < 0;
-    this.accelerate(this.mobileAcceleration, this.mobileMaxSpeed);
+    this.accelerate(this.acceleration, this.maxSpeed); //testing to see if we can remove these
   }
 
   resetMovement() {
@@ -207,7 +203,7 @@ export class PlayerPhysics {
     this.velocity.x = 0;
     this.velocity.z = 0;
     this.updateHorizontalMovement();
-    this.updateVeriticalMovement();
+    this.updateVerticalMovement();
     this.player.updatePosition(this.body.position, this.body.quaternion);
   }
 }

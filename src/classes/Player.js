@@ -12,7 +12,7 @@ export class Player {
     this.color = 0x003366;
     this.horizontalThreshold = 5;
     this.verticalThreshold = this.height;
-    this.initPosition = new THREE.Vector3(0, 0, 0);
+    this.initPosition = new THREE.Vector3(0, 1, 0);
     this.initQuaternion = new THREE.Quaternion()
     this.initGraphics();
     this.initPhysics();
