@@ -9,13 +9,15 @@ export class PlayerPhysics {
 
     this.velocity = new THREE.Vector3();
     this.isJumping = false;
-    this.maxJumpHeight = 7;
+    this.maxJumpHeight = 15;
     this.startJumpHeight = 0;
     this.isOnGround = true;
-    this.jumpSpeed = 3;
-    this.acceleration = 13;
+    this.jumpSpeed = 10;
+
+    this.acceleration = 20;
     this.deceleration = 5;
-    this.maxSpeed = 6;
+    this.maxSpeed = 10;
+    this.deltaTime = 0;
 
     this.keys = {
       left: false,
@@ -33,7 +35,7 @@ export class PlayerPhysics {
   initBody() {
     let shape = new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5));
     this.body = new CANNON.Body({
-      mass: 1,
+      mass: 100,
       position: this.player.initPosition,
       shape: shape
     });
@@ -145,15 +147,15 @@ export class PlayerPhysics {
     if (this.keys.backward) accelerationVec.x -= acceleration;
     if (this.keys.forward) accelerationVec.x += acceleration;
 
-    this.body.velocity.x += accelerationVec.x * this.world.fixedTimeStep;
-    this.body.velocity.z += accelerationVec.z * this.world.fixedTimeStep;
+    this.body.velocity.x += accelerationVec.x * this.deltaTime;
+    this.body.velocity.z += accelerationVec.z * this.deltaTime;
     this.body.velocity.x = THREE.MathUtils.clamp(this.body.velocity.x, -maxSpeed, maxSpeed);
     this.body.velocity.z = THREE.MathUtils.clamp(this.body.velocity.z, -maxSpeed, maxSpeed);
   }
 
   decelerate(value, deceleration) {
     if (value !== 0) {
-      let dec = deceleration * this.world.fixedTimeStep;
+      let dec = deceleration * this.deltaTime;
       return Math.abs(value) - dec > 0 ? value - Math.sign(value) * dec : 0;
     }
     return value;
@@ -161,15 +163,13 @@ export class PlayerPhysics {
 
   updateVerticalMovement() {
     if (this.keys.jump && this.isOnGround && !this.isJumping) {
-      this.startJumpHeight = this.player.mesh.position.y;
       this.isOnGround = false;
       this.isJumping = true;
+      this.body.velocity.y = Math.sqrt(2 * this.jumpSpeed * this.world.gravity.length());
     }
-    if (this.isJumping && this.keys.jump) {
-      let jumpIncrement = Math.sqrt(2 * this.jumpSpeed * this.world.fixedTimeStep);
-      if (this.player.mesh.position.y - this.startJumpHeight < this.maxJumpHeight) {
-        this.body.velocity.y += jumpIncrement;
-      } else {
+
+    if (this.isJumping) {
+      if (this.player.mesh.position.y - this.startJumpHeight >= this.maxJumpHeight) {
         this.isJumping = false;
       }
     }
@@ -180,7 +180,7 @@ export class PlayerPhysics {
     this.keys.left = dx < 0;
     this.keys.backward = dy > 0;
     this.keys.forward = dy < 0;
-    this.accelerate(this.acceleration, this.maxSpeed); //testing to see if we can remove these
+    this.accelerate(this.acceleration, this.maxSpeed);
   }
 
   resetMovement() {
@@ -209,7 +209,8 @@ export class PlayerPhysics {
     this.reset();
   }
 
-  update() {
+  update(deltaTime) {
+    this.deltaTime = deltaTime;
     this.velocity.x = 0;
     this.velocity.z = 0;
     this.updateHorizontalMovement();

@@ -41,10 +41,10 @@ export class Game {
       level15,
       level16
     ]; //TODO: Move everything for levels to level class
-    this.currentLevelIndex = 0;
+    this.currentLevelIndex = 4;
     this.gameState = 'starting';
     this.loadingLevel = false;
-    this.fixedTimeStep = 1 / 120;
+    this.lastTime = performance.now();
     this.timer = 0;
     this.timerInterval = null;
     this.deaths = 0;
@@ -70,7 +70,6 @@ export class Game {
     this.scene.background = new THREE.Color(0xF98D8D);
     this.world = new CANNON.World();
     this.world.gravity.set(0, -9.82, 0);
-    this.world.fixedTimeStep = this.fixedTimeStep;
     this.player = new Player(this.scene, this.world, this);
   }
 
@@ -202,7 +201,6 @@ export class Game {
   }
 
   updateDirectionalLight() {
-     if (!this.directionalLight || !this.player || !this.player.mesh) { console.log('fuck'); return;}
     const offset = new THREE.Vector3(-10, 30, 0);
     this.directionalLight.position.copy(this.player.mesh.position.clone().add(offset));
     this.directionalLight.target.position.copy(this.player.mesh.position);
@@ -211,16 +209,17 @@ export class Game {
 
   animate = () => {
     if (this.gameState !== 'playing') return;
-    this.world.step(this.fixedTimeStep);
-    this.player.update();
+
+    const now = performance.now();
+    const deltaTime = (now - this.lastTime) / 1000;
+    this.lastTime = now;
+
+    this.world.step(deltaTime);
+    this.player.update(deltaTime);
     this.updateDirectionalLight(); // TODO: Needs a light class now
     this.cameraController.update(this.player);
-    const deltaTime = performance.now() / 1000;
     if (this.currentLevel && this.currentLevel.objects && this.currentLevel.objects.length > 0) {
-      const deltaTime = performance.now() / 1000;
-      this.currentLevel.objects.forEach(o => {
-        o.update(deltaTime);
-      });
+      this.currentLevel.objects.forEach( o => { o.update(deltaTime); } );
     }
     this.renderer.render(this.scene, this.cameraController.camera);
     requestAnimationFrame(this.animate);

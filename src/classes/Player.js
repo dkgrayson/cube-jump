@@ -12,7 +12,7 @@ export class Player {
     this.color = 0x003366;
     this.horizontalThreshold = 5;
     this.verticalThreshold = this.height;
-    this.initPosition = new THREE.Vector3(0, 1, 0);
+    this.initPosition = new THREE.Vector3(0, 2, 0);
     this.initQuaternion = new THREE.Quaternion()
     this.initGraphics();
     this.initPhysics();
@@ -93,7 +93,7 @@ export class Player {
 
   reset() {
     let platformPosition = this.game.currentLevel.firstPlatform.mesh.position;
-    let startingHeight = this.height / 2 + this.game.currentLevel.firstPlatform.height / 2 + 1;
+    let startingHeight = this.height / 2 + this.game.currentLevel.firstPlatform.height / 2 + 2;
     this.mesh.position.set(platformPosition.x, platformPosition.y + startingHeight, platformPosition.z);
     this.physics.body.position.set(platformPosition.x, platformPosition.y + startingHeight, platformPosition.z);
   }
@@ -103,8 +103,8 @@ export class Player {
     this.mesh.quaternion.copy(q);
   }
 
-  update() {
-    this.physics.update();
+  update(deltaTime) {
+    this.physics.update(deltaTime);
     if (this.checkGameOver()) this.handleGameOver();
     if (this.checkLevelCompletion()) this.handleLevelCompletion();
   }

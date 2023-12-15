@@ -17,6 +17,7 @@ export class Platform {
     this.initialX = this.x;
     this.initialY = this.y;
     this.initialZ = this.z;
+    this.currentTime = 0;
     this.scene = scene;
     this.world = world;
     this.color = new THREE.Color(parseInt(color, 16));
@@ -47,8 +48,9 @@ export class Platform {
   }
 
   update(deltaTime) {
+    this.currentTime += deltaTime;
     if (this.moveRange > 0 && this.moveSpeed > 0 && this.moveAxis) {
-      let moveOffset = Math.sin(deltaTime * this.moveSpeed) * this.moveRange;
+      let moveOffset = Math.sin(this.currentTime * this.moveSpeed) * this.moveRange;
 
       switch (this.moveAxis) {
         case 'x':
