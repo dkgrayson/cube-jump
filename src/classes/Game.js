@@ -55,8 +55,7 @@ export class Game {
     this.initLights();
     this.initJoystick();
     this.loadLevel(this.currentLevelIndex);
-    this.startTimer();
-    this.animate();
+    this.initListeners();
   }
 
   initJoystick() {
@@ -90,6 +89,18 @@ export class Game {
     directionalLight.position.set(10, 10, 10);
     directionalLight.castShadow = true;
     this.scene.add(directionalLight);
+  }
+
+  initListeners() {
+    document.getElementById('startButton').addEventListener('click', () => {
+      document.getElementById('intro').style.display = 'none';
+      this.startGame();
+    });
+  }
+
+  startGame() {
+    this.startTimer();
+    this.animate();
   }
 
   startTimer() {
