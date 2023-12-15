@@ -18,7 +18,15 @@ canvas {
 .timer {
   position: absolute;
   top: 10px;
-  right: 10px;
+  right: 15px;
+  color: white;
+  font-size: 20px;
+}
+
+.deaths {
+  position: absolute;
+  top: 35px;
+  right: 15px;
   color: white;
   font-size: 20px;
 }

@@ -47,6 +47,7 @@ export class Game {
     this.fixedTimeStep = 1 / 120;
     this.timer = 0;
     this.timerInterval = null;
+    this.deaths = 0;
     this.init();
   }
 
@@ -128,6 +129,10 @@ export class Game {
     document.querySelector('.timer').innerText = `Time: ${minutes}:${seconds}`;
   }
 
+  updateDeathsDisplay() {
+    document.querySelector('.deaths').innerText = `Deaths: ${this.deaths}`;
+  }
+
   loadLevel(levelIndex) {
     if (this.loadingLevel) return;
     this.loadingLevel = true;
@@ -163,9 +168,9 @@ export class Game {
 
   handleGameOver() {
     if (this.gameState !== 'playing') return;
-
     this.gameState = 'gameOver';
-    console.log('DEAD AGAIN');
+    this.deaths++;
+    this.updateDeathsDisplay();
     this.loadLevel(this.currentLevelIndex);
   }
 
