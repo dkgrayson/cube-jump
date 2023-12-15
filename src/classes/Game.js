@@ -41,7 +41,7 @@ export class Game {
       level15,
       level16
     ]; //TODO: Move everything for levels to level class
-    this.currentLevelIndex = 4;
+    this.currentLevelIndex = 0;
     this.gameState = 'starting';
     this.loadingLevel = false;
     this.lastTime = performance.now();
