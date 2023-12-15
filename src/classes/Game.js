@@ -19,6 +19,7 @@ import level12 from '../../levels/12.json';
 import level13 from '../../levels/13.json';
 import level14 from '../../levels/14.json';
 import level15 from '../../levels/15.json';
+import level16 from '../../levels/16.json';
 
 export class Game {
   constructor() {
@@ -37,7 +38,8 @@ export class Game {
       level12,
       level13,
       level14,
-      level15
+      level15,
+      level16
     ]; //TODO: Move everything for levels to level class
     this.currentLevelIndex = 0;
     this.gameState = 'starting';
@@ -86,21 +88,19 @@ export class Game {
 
   initLights() {
     let directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-    directionalLight.position.set(10, 10, 10);
+    directionalLight.position.set(0, 1000, 0);
     directionalLight.castShadow = true;
     this.scene.add(directionalLight);
   }
 
   initListeners() {
-    document.getElementById('startButton').addEventListener('click', () => {
+    document.getElementById('start').addEventListener('click', (event) => {
+      event.preventDefault();
+      this.player.physics.resetKeys();
       document.getElementById('intro').style.display = 'none';
-      this.startGame();
+      this.startTimer();
+      this.animate();
     });
-  }
-
-  startGame() {
-    this.startTimer();
-    this.animate();
   }
 
   startTimer() {

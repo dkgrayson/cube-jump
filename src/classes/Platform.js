@@ -8,6 +8,7 @@ export class Platform {
     this.z = platform.z;
     this.width = platform.width;
     this.depth = platform.depth;
+    this.height = platform.height || 1;
     this.isFinal = platform.isFinal;
     this.isFirst = platform.isFirst;
     this.moveRange = platform.moveRange;
@@ -16,7 +17,6 @@ export class Platform {
     this.initialX = this.x;
     this.initialY = this.y;
     this.initialZ = this.z;
-    this.direction = 1;
     this.scene = scene;
     this.world = world;
     this.color = new THREE.Color(parseInt(color, 16));
@@ -26,7 +26,7 @@ export class Platform {
   }
 
   initGraphics() {
-    let geometry = new THREE.BoxGeometry(this.width, 1, this.depth);
+    let geometry = new THREE.BoxGeometry(this.width, this.height, this.depth);
     let material = new THREE.MeshBasicMaterial({ color: this.color });
     this.mesh = new THREE.Mesh(geometry, material);
     this.mesh.castShadow = true;
@@ -36,7 +36,7 @@ export class Platform {
   }
 
   initBody() {
-    let shape = new CANNON.Box(new CANNON.Vec3(this.width / 2, 0.5, this.depth / 2));
+    let shape = new CANNON.Box(new CANNON.Vec3(this.width / 2, this.height / 2, this.depth / 2));
     this.body = new CANNON.Body({
       mass: 0,
       position: new CANNON.Vec3(this.x, this.y, this.z),

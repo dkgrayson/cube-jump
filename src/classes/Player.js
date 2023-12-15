@@ -85,9 +85,17 @@ export class Player {
   }
 
   reset() {
-    let platformPosition = this.game.currentLevel.firstPlatform.mesh.position;
+    let platform = this.game.currentLevel.firstPlatform
+    let platformPosition = platform.mesh.position;
     this.mesh.position.copy(platformPosition.x, platformPosition.y + this.height, platformPosition.z);
     this.physics.body.position.set(platformPosition.x, platformPosition.y + this.height, platformPosition.z);
+  }
+
+  reset() {
+    let platformPosition = this.game.currentLevel.firstPlatform.mesh.position;
+    let startingHeight = this.height / 2 + this.game.currentLevel.firstPlatform.height / 2 + 1;
+    this.mesh.position.set(platformPosition.x, platformPosition.y + startingHeight, platformPosition.z);
+    this.physics.body.position.set(platformPosition.x, platformPosition.y + startingHeight, platformPosition.z);
   }
 
   updatePosition(p, q) {

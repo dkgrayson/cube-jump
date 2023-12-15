@@ -60,6 +60,16 @@ export class PlayerPhysics {
     });
   }
 
+  resetKeys() {
+    this.keys = {
+      left: false,
+      right: false,
+      forward: false,
+      backward: false,
+      jump: false
+    };
+  }
+
   handleCollision = (event) => {
     let collidedBody = event.contact.bi === this.body ? event.contact.bj : event.contact.bi;
     if (collidedBody.collisionFilterGroup === 1) this.handleGroundCollision();

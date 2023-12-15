@@ -3,8 +3,9 @@
   "background": "0x9ACD32",
   "platformColor": "0x6B8E23",
   "platforms": [
-    { "x": 0, "y": -5, "z": 0, "width": 10, "depth": 10, "isFirst": true },
-    { "x": 30, "y": 0, "z": 0, "width": 5, "depth": 5 },
-    { "x": 60, "y": 5, "z": 0, "width": 10, "depth": 10, "isFinal": true, "moveSpeed": 2, "moveAxis": "z", "moveRange": 5 }
+    { "x": 0, "y": -5, "z": 0, "width": 10, "depth": 10, "height": 1, "isFirst": true },
+    { "x": 15,"y": 0,"z": -10,"width": 10,"depth": 1,"height": 10 },
+    { "x": 30, "y": 0, "z": 0, "width": 5, "depth": 5, "height": 1 },
+    { "x": 60, "y": 5, "z": 0, "width": 10, "depth": 10, "height": 1, "isFinal": true, "moveSpeed": 2, "moveAxis": "z", "moveRange": 5 }
   ]
 }

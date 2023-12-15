@@ -72,6 +72,10 @@ canvas {
   .jump_button {
     display: flex;
   }
+
+  .intro p {
+    display: none;
+  }
 }
 
 .intro {
@@ -86,11 +90,12 @@ canvas {
   height: 100%;
 }
 
-#startButton {
+.start {
   margin-top: 20px;
   padding: 10px 20px;
   font-size: 20px;
   cursor: pointer;
   background-color: #FFE9E9;
   border: none;
+  text-decoration: none;
 }
