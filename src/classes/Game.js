@@ -88,10 +88,11 @@ export class Game {
   }
 
   initLights() {
-    let directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-    directionalLight.position.set(0, 1000, 0);
-    directionalLight.castShadow = true;
-    this.scene.add(directionalLight);
+    this.directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    this.directionalLight.position.set(-10, 30, 0);
+    this.directionalLight.castShadow = true;
+    this.directionalLight.target = this.player.mesh;
+    this.scene.add(this.directionalLight);
   }
 
   initListeners() {
@@ -200,10 +201,19 @@ export class Game {
     this.incrementLevel();
   }
 
+  updateDirectionalLight() {
+     if (!this.directionalLight || !this.player || !this.player.mesh) { console.log('fuck'); return;}
+    const offset = new THREE.Vector3(-10, 30, 0);
+    this.directionalLight.position.copy(this.player.mesh.position.clone().add(offset));
+    this.directionalLight.target.position.copy(this.player.mesh.position);
+    this.directionalLight.target.updateMatrixWorld();
+  }
+
   animate = () => {
     if (this.gameState !== 'playing') return;
     this.world.step(this.fixedTimeStep);
     this.player.update();
+    this.updateDirectionalLight(); // TODO: Needs a light class now
     this.cameraController.update(this.player);
     const deltaTime = performance.now() / 1000;
     if (this.currentLevel && this.currentLevel.objects && this.currentLevel.objects.length > 0) {

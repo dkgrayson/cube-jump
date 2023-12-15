@@ -22,12 +22,12 @@ export class Player {
     let geometry = new THREE.BoxGeometry(this.width, this.height, this.depth);
 
     let materials = [
-      new THREE.MeshBasicMaterial({ color: 0xff0000 }),
-      new THREE.MeshBasicMaterial({ color: 0x0000ff }),
-      new THREE.MeshBasicMaterial({ color: 0x00ff00 }),
-      new THREE.MeshBasicMaterial({ color: 0xffff00 }),
-      new THREE.MeshBasicMaterial({ color: 0xff00ff }),
-      new THREE.MeshBasicMaterial({ color: 0x00ffff })
+      new THREE.MeshStandardMaterial({ color: 0xff0000 }),
+      new THREE.MeshStandardMaterial({ color: 0x0000ff }),
+      new THREE.MeshStandardMaterial({ color: 0x00ff00 }),
+      new THREE.MeshStandardMaterial({ color: 0xffff00 }),
+      new THREE.MeshStandardMaterial({ color: 0xff00ff }),
+      new THREE.MeshStandardMaterial({ color: 0x00ffff })
     ];
 
     this.mesh = new THREE.Mesh(geometry, materials);
