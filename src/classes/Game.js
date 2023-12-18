@@ -123,6 +123,11 @@ export class Game {
     this.updateTimerDisplay();
   }
 
+  getTime(timer) {
+    return Math.floor(timer / 60).toString().padStart(2, '0'),
+    (timer % 60).toString().padStart(2, '0');
+  }
+
   updateTimerDisplay() {
     const minutes = Math.floor(this.timer / 60).toString().padStart(2, '0');
     const seconds = (this.timer % 60).toString().padStart(2, '0');
@@ -140,7 +145,7 @@ export class Game {
     if (levelIndex >= this.levels.length) {
       this.gameState = 'win';
       this.stopTimer();
-      alert('You win!');
+      this.loadOutro();
       return;
     }
 
@@ -158,6 +163,15 @@ export class Game {
     this.player.reset();
     this.gameState = 'playing';
     this.loadingLevel = false;
+  }
+
+  loadOutro() {
+    let time = document.getElementById('stats-time');
+    let deaths = document.getElementById('stats-deaths');
+    let [minutes, seconds] = this.getTime(this.timer);
+    time.innerText = `Total Time: ${minutes}:${seconds}`;
+    deaths.innerText = `Total Deaths: ${this.deaths}`
+    document.getElementById('outro').classList.add('active');
   }
 
   loadTitle(name, number) {
