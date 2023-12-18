@@ -21,6 +21,7 @@ export class Platform {
     this.scene = scene;
     this.world = world;
     this.color = new THREE.Color(parseInt(color, 16));
+    this.collisionType = this.isFinal ? 4 : 2;
 
     this.initGraphics();
     this.initBody();
@@ -28,7 +29,7 @@ export class Platform {
 
   initGraphics() {
     let geometry = new THREE.BoxGeometry(this.width, this.height, this.depth);
-    let material = new THREE.MeshStandardMaterial({ color: this.color });
+    let material = new THREE.MeshStandardMaterial({ color: this.color, roughness: .1, metalness: .8 });
     this.mesh = new THREE.Mesh(geometry, material);
     this.mesh.castShadow = true;
     this.mesh.receiveShadow = true;
@@ -42,7 +43,8 @@ export class Platform {
       mass: 0,
       position: new CANNON.Vec3(this.x, this.y, this.z),
       shape: shape,
-      collisionFilterGroup: 1
+      collisionFilterGroup: 1,
+      type: this.collisionType
     });
     this.world.addBody(this.body);
   }

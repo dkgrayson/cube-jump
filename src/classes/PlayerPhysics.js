@@ -74,7 +74,8 @@ export class PlayerPhysics {
 
   handleCollision = (event) => {
     let collidedBody = event.contact.bi === this.body ? event.contact.bj : event.contact.bi;
-    if (collidedBody.collisionFilterGroup === 1) this.handleGroundCollision();
+    if (collidedBody.type === 2 || collidedBody.type === 4) this.handleGroundCollision();
+    if (collidedBody.type === 4) this.handleLevelCompletion();
   }
 
   handleGroundCollision() {
@@ -206,6 +207,7 @@ export class PlayerPhysics {
   }
 
   handleLevelCompletion() {
+    this.player.handleLevelCompletion();
     this.reset();
   }
 

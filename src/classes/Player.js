@@ -74,26 +74,18 @@ export class Player {
 
   handleLevelCompletion() {
     this.game.handleLevelCompletion();
-    this.physics.handleLevelCompletion();
     this.reset();
   }
 
   handleGameOver() {
-    this.reset();
-    this.physics.handleGameOver();
     this.game.handleGameOver();
-  }
-
-  reset() {
-    let platform = this.game.currentLevel.firstPlatform
-    let platformPosition = platform.mesh.position;
-    this.mesh.position.copy(platformPosition.x, platformPosition.y + this.height, platformPosition.z);
-    this.physics.body.position.set(platformPosition.x, platformPosition.y + this.height, platformPosition.z);
+    this.physics.handleGameOver();
+    this.reset();
   }
 
   reset() {
     let platformPosition = this.game.currentLevel.firstPlatform.mesh.position;
-    let startingHeight = this.height / 2 + this.game.currentLevel.firstPlatform.height / 2 + 2;
+    let startingHeight = this.height / 2 + this.game.currentLevel.firstPlatform.height / 2 + 9;
     this.mesh.position.set(platformPosition.x, platformPosition.y + startingHeight, platformPosition.z);
     this.physics.body.position.set(platformPosition.x, platformPosition.y + startingHeight, platformPosition.z);
   }
@@ -106,6 +98,5 @@ export class Player {
   update(deltaTime) {
     this.physics.update(deltaTime);
     if (this.checkGameOver()) this.handleGameOver();
-    if (this.checkLevelCompletion()) this.handleLevelCompletion();
   }
 }
