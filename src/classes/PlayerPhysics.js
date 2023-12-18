@@ -207,8 +207,8 @@ export class PlayerPhysics {
   }
 
   handleLevelCompletion() {
-    this.player.handleLevelCompletion();
     this.reset();
+    this.player.handleLevelCompletion();
   }
 
   update(deltaTime) {

@@ -85,7 +85,7 @@ export class Player {
 
   reset() {
     let platformPosition = this.game.currentLevel.firstPlatform.mesh.position;
-    let startingHeight = this.height / 2 + this.game.currentLevel.firstPlatform.height / 2 + 9;
+    let startingHeight = this.height / 2 + this.game.currentLevel.firstPlatform.height / 2;
     this.mesh.position.set(platformPosition.x, platformPosition.y + startingHeight, platformPosition.z);
     this.physics.body.position.set(platformPosition.x, platformPosition.y + startingHeight, platformPosition.z);
   }

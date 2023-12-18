@@ -48,7 +48,7 @@ export class Game {
     this.timer = 0;
     this.timerInterval = null;
     this.deaths = 0;
-    this.init();
+    this.waitForStart();
   }
 
   init() {
@@ -58,7 +58,8 @@ export class Game {
     this.initLights();
     this.initJoystick();
     this.loadLevel(this.currentLevelIndex);
-    this.initListeners();
+    this.startTimer();
+    this.animate();
   }
 
   initJoystick() {
@@ -67,6 +68,7 @@ export class Game {
 
   initScene() {
     this.scene = new THREE.Scene();
+    this.scene.fog = new THREE.Fog( 0xcccccc, 10, 50 );
     this.scene.background = new THREE.Color(0xF98D8D);
     this.world = new CANNON.World();
     this.world.gravity.set(0, -9.82, 0);
@@ -94,13 +96,11 @@ export class Game {
     this.scene.add(this.directionalLight);
   }
 
-  initListeners() {
+  waitForStart() {
     document.getElementById('start').addEventListener('click', (event) => {
       event.preventDefault();
-      this.player.physics.resetKeys();
       document.getElementById('intro').style.display = 'none';
-      this.startTimer();
-      this.animate();
+      this.init();
     });
   }
 
@@ -160,7 +160,7 @@ export class Game {
       this.scene.background = new THREE.Color(bgColor);
     }
     this.loadTitle(this.levelData.name, levelIndex + 1);
-    this.player.reset();
+    // this.player.reset();
     this.gameState = 'playing';
     this.loadingLevel = false;
   }
