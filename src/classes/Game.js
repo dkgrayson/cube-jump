@@ -4,6 +4,8 @@ import { Player } from './Player';
 import { Level } from './Level';
 import { Camera } from './Camera';
 import { Joystick } from './Joystick';
+import { PlayerPhysics } from './PlayerPhysics';
+import { getTime } from './Helpers';
 import level1 from '../../levels/1.json';
 import level2 from '../../levels/2.json';
 import level3 from '../../levels/3.json';
@@ -51,13 +53,17 @@ export class Game {
     this.waitForStart();
   }
 
-  init() {
+  initGame() {
     this.initScene();
+    this.initWorld();
     this.initRendender();
     this.initCamera();
-    this.initLights();
     this.initJoystick();
     this.loadLevel(this.currentLevelIndex);
+    this.initPlayer();
+    this.initPlayerPhysics();
+    this.initLights();
+    this.initListeners();
     this.startTimer();
     this.animate();
   }
@@ -70,9 +76,20 @@ export class Game {
     this.scene = new THREE.Scene();
     this.scene.fog = new THREE.Fog( 0xcccccc, 10, 50 );
     this.scene.background = new THREE.Color(0xF98D8D);
+  }
+
+  initWorld() {
     this.world = new CANNON.World();
     this.world.gravity.set(0, -9.82, 0);
-    this.player = new Player(this.scene, this.world, this);
+  }
+
+  initPlayer() {
+    this.player = new Player(this.scene, this.world, this, this.currentLevel.firstPlatform);
+    this.scene.add(this.player.mesh);
+  }
+
+  initPlayerPhysics() {
+    this.playerPhysics = new PlayerPhysics(this.world, this.player);
   }
 
   initCamera() {
@@ -96,15 +113,26 @@ export class Game {
     this.scene.add(this.directionalLight);
   }
 
+  initListeners() {
+    this.playerPhysics.body.addEventListener('collide', this.handleCollision);
+  }
+
+  handleCollision = (event) => {
+    let collidedBody = event.contact.bi === this.playerPhysics.body ? event.contact.bj : event.contact.bi;
+    if (collidedBody.type === 2 || collidedBody.type === 4) this.playerPhysics.handleGroundCollision();
+    if (collidedBody.type === 4) this.handleLevelCompletion();
+  }
+
   waitForStart() {
     document.getElementById('start').addEventListener('click', (event) => {
       event.preventDefault();
       document.getElementById('intro').style.display = 'none';
-      this.init();
+      this.initGame();
     });
   }
 
   startTimer() {
+    this.gameState = 'playing';
     this.timer = 0;
     this.updateTimerDisplay();
     this.timerInterval = setInterval(() => {
@@ -121,11 +149,6 @@ export class Game {
     this.stopTimer();
     this.timer = 0;
     this.updateTimerDisplay();
-  }
-
-  getTime(timer) {
-    return Math.floor(timer / 60).toString().padStart(2, '0'),
-    (timer % 60).toString().padStart(2, '0');
   }
 
   updateTimerDisplay() {
@@ -160,8 +183,6 @@ export class Game {
       this.scene.background = new THREE.Color(bgColor);
     }
     this.loadTitle(this.levelData.name, levelIndex + 1);
-    // this.player.reset();
-    this.gameState = 'playing';
     this.loadingLevel = false;
   }
 
@@ -186,32 +207,20 @@ export class Game {
     this.deaths++;
     this.updateDeathsDisplay();
     this.loadLevel(this.currentLevelIndex);
+    this.player.reset(this.currentLevel.firstPlatform);
+    this.playerPhysics.reset();
+    this.gameState = 'playing';
   }
 
   handleJoystickMove(dx, dy) {
-    this.player.physics.applyJoystickInput(dx, dy);
-  }
-
-  calculateDistance(start, end) {
-    return [new THREE.Vector2(
-      start.x,
-      start.z
-    ).distanceTo(
-      new THREE.Vector2(
-        end.x,
-        end.z
-      )
-    ),
-    Math.abs(start.y - end.y)];
-  }
-
-  incrementLevel() {
-    this.currentLevelIndex++;
-    this.loadLevel(this.currentLevelIndex);
+    this.playerPhysics.applyJoystickInput(dx, dy);
   }
 
   handleLevelCompletion() {
-    this.incrementLevel();
+    this.currentLevelIndex++;
+    this.loadLevel(this.currentLevelIndex);
+    this.player.reset(this.currentLevel.firstPlatform);
+    this.playerPhysics.reset();
   }
 
   updateDirectionalLight() {
@@ -221,15 +230,20 @@ export class Game {
     this.directionalLight.target.updateMatrixWorld();
   }
 
+  checkGameOver() {
+    return this.player.mesh.position.y < this.currentLevel.firstPlatform.y - 20;
+  }
+
   animate = () => {
     if (this.gameState !== 'playing') return;
+    if (this.checkGameOver()) this.handleGameOver();
 
     const now = performance.now();
     const deltaTime = (now - this.lastTime) / 1000;
     this.lastTime = now;
 
     this.world.step(deltaTime);
-    this.player.update(deltaTime);
+    this.playerPhysics.update(deltaTime);
     this.updateDirectionalLight(); // TODO: Needs a light class now
     this.cameraController.update(this.player);
     if (this.currentLevel && this.currentLevel.objects && this.currentLevel.objects.length > 0) {

@@ -2,12 +2,9 @@ import * as THREE from 'three';
 import * as CANNON from 'cannon';
 
 export class PlayerPhysics {
-  constructor(scene, world, player) {
-    this.scene = scene;
+  constructor(world, player) {
     this.world = world;
     this.player = player;
-
-    this.velocity = new THREE.Vector3();
     this.isJumping = false;
     this.maxJumpHeight = 15;
     this.startJumpHeight = 0;
@@ -45,7 +42,6 @@ export class PlayerPhysics {
   initListeners() {
     this.onKeyDown = this.onKeyDown.bind(this);
     this.onKeyUp = this.onKeyUp.bind(this)
-    this.body.addEventListener('collide', this.handleCollision);
     document.addEventListener('keydown', this.onKeyDown);
     document.addEventListener('keyup', this.onKeyUp);
   }
@@ -70,12 +66,6 @@ export class PlayerPhysics {
       backward: false,
       jump: false
     };
-  }
-
-  handleCollision = (event) => {
-    let collidedBody = event.contact.bi === this.body ? event.contact.bj : event.contact.bi;
-    if (collidedBody.type === 2 || collidedBody.type === 4) this.handleGroundCollision();
-    if (collidedBody.type === 4) this.handleLevelCompletion();
   }
 
   handleGroundCollision() {
@@ -192,9 +182,11 @@ export class PlayerPhysics {
   }
 
   reset() {
-    this.isJumping = false;
-    this.updatePosition(this.player.initPosition, this.player.initQuaternion);
+    this.resetKeys();
     this.resetMovement();
+    this.isJumping = false;
+    this.isOnGround = true;
+    this.updatePosition(this.player.mesh.position, this.player.mesh.quaternion);
   }
 
   updatePosition(p, q) {
@@ -213,8 +205,6 @@ export class PlayerPhysics {
 
   update(deltaTime) {
     this.deltaTime = deltaTime;
-    this.velocity.x = 0;
-    this.velocity.z = 0;
     this.updateHorizontalMovement();
     this.updateVerticalMovement();
     this.player.updatePosition(this.body.position, this.body.quaternion);
