@@ -95,6 +95,7 @@ export class Game {
   }
 
   handleCollision = (event) => {
+    if (!this.gameState === 'playing') return;
     let collidedBody = event.contact.bi === this.playerPhysics.body ? event.contact.bj : event.contact.bi;
     if (collidedBody.type === 2) this.playerPhysics.handleGroundCollision();
     if (collidedBody.type === 4) this.handleLevelCompletion();
@@ -143,6 +144,7 @@ export class Game {
   }
 
   handleJoystickMove(dx, dy) {
+    if (!this.gameState === 'playing') return;
     this.playerPhysics.applyJoystickInput(dx, dy);
   }
 
@@ -158,6 +160,7 @@ export class Game {
   }
 
   handleLevelCompletion() {
+    if (!this.gameState === 'playing') return;
     this.gameState = 'loading';
     this.currentLevelIndex++;
     if (this.checkGameCompletion()) return this.handleGameCompletion();
@@ -171,6 +174,7 @@ export class Game {
   }
 
   handleGameCompletion() {
+    if (!this.gameState === 'playing') return;
     this.gameState = 'win';
     this.timer.stop();
     this.loadOutro();
