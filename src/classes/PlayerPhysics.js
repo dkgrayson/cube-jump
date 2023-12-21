@@ -182,7 +182,7 @@ export class PlayerPhysics {
 
   reset() {
     this.resetKeys();
-    this.resetMovement();
+    // this.resetMovement();
     this.isJumping = false;
     this.isOnGround = true;
     this.updatePosition(this.player.mesh.position, this.player.mesh.quaternion);

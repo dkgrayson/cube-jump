@@ -112,14 +112,17 @@ export class Game {
   loadLevel(callback) {
     if (this.loadingLevel) return;
     this.loadingLevel = true;
+
     if (this.currentLevel) this.currentLevel.clearLevel();
+
     let levelData = this.levels[this.currentLevelIndex];
     this.currentLevel = new Level(this.scene, this.world);
-    this.currentLevel.loadLevel(levelData);
-    this.loadBackground(levelData);
-    this.loadTitle(levelData.name, this.currentLevelIndex + 1);
-    this.loadingLevel = false;
-    if (callback) callback();
+    this.currentLevel.loadLevel(levelData, (firstPlatform) => {
+      this.loadBackground(levelData);
+      this.loadTitle(levelData.name, this.currentLevelIndex + 1);
+      this.loadingLevel = false;
+      if (callback) callback(firstPlatform);
+    });
   }
 
   loadBackground(data) {
@@ -160,18 +163,25 @@ export class Game {
   }
 
   handleLevelCompletion() {
-    if (!this.gameState === 'playing') return;
+    if (this.gameState !== 'playing') return;
     this.gameState = 'loading';
     this.currentLevelIndex++;
-    if (this.checkGameCompletion()) return this.handleGameCompletion();
-    this.loadLevel(this.resetPlayer());
-    this.gameState = 'playing';
+
+    if (this.checkGameCompletion()) {
+      this.handleGameCompletion();
+    } else {
+      this.loadLevel((firstPlatformPosition) => {
+        this.resetPlayer(firstPlatformPosition);
+        this.gameState = 'playing';
+      });
+    }
   }
 
-  resetPlayer() {
-    this.player.reset(this.currentLevel.firstPlatform);
+  resetPlayer(platform) {
+    this.player.reset(platform);
     this.playerPhysics.reset();
   }
+
 
   handleGameCompletion() {
     if (!this.gameState === 'playing') return;

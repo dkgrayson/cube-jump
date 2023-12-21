@@ -9,18 +9,19 @@
       this.finalPlatform = null;
     }
 
-    loadLevel(data) {
+    loadLevel(data, callback) {
       this.clearLevel();
-      this.loadPlatforms(data.platforms, data.platformColor);
+      this.loadPlatforms(data.platforms, data.platformColor, callback);
     }
 
-    loadPlatforms(platforms, color) {
+    loadPlatforms(platforms, color, callback) {
       platforms.forEach(p => {
         let platform = new Platform(this.scene, this.world, p, color);
         this.objects.push(platform);
         if (p.isFinal) this.finalPlatform = platform;
         if (p.isFirst) this.firstPlatform = platform;
       });
+      if (callback) callback(this.firstPlatform);
     }
 
     clearLevel() {
