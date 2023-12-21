@@ -197,11 +197,6 @@ export class PlayerPhysics {
     this.reset();
   }
 
-  handleLevelCompletion() {
-    this.reset();
-    this.player.handleLevelCompletion();
-  }
-
   update(deltaTime) {
     this.deltaTime = deltaTime;
     this.updateHorizontalMovement();

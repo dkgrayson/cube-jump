@@ -45,7 +45,7 @@ export class Game {
       level15,
       level16
     ];
-    this.currentLevelIndex = 15;
+    this.currentLevelIndex = 0;
     this.gameState = 'starting';
     this.loadingLevel = false;
     this.lastTime = performance.now();
@@ -60,7 +60,7 @@ export class Game {
     this.initRendender();
     this.initCamera();
     this.initJoystick();
-    this.loadLevel(this.currentLevelIndex);
+    this.loadLevel();
     this.initPlayer();
     this.initPlayerPhysics();
     this.initLights();
@@ -129,7 +129,7 @@ export class Game {
 
   handleCollision = (event) => {
     let collidedBody = event.contact.bi === this.playerPhysics.body ? event.contact.bj : event.contact.bi;
-    if (collidedBody.type === 2 || collidedBody.type === 4) this.playerPhysics.handleGroundCollision();
+    if (collidedBody.type === 2) this.playerPhysics.handleGroundCollision();
     if (collidedBody.type === 4) this.handleLevelCompletion();
   }
 
@@ -141,7 +141,7 @@ export class Game {
     });
   }
 
-  loadLevel() {
+  loadLevel(callback) {
     if (this.loadingLevel) return;
     this.loadingLevel = true;
     if (this.currentLevel) this.currentLevel.clearLevel();
@@ -151,12 +151,13 @@ export class Game {
     this.loadBackground(levelData);
     this.loadTitle(levelData.name, this.currentLevelIndex + 1);
     this.loadingLevel = false;
+    if (callback) callback();
   }
 
   loadBackground(data) {
     if (!data.background) return;
-      let bgColor = parseInt(data.background, 16);
-      this.scene.background = new THREE.Color(bgColor);
+    let bgColor = parseInt(data.background, 16);
+    this.scene.background = new THREE.Color(bgColor);
   }
 
   loadOutro() {
@@ -193,10 +194,13 @@ export class Game {
     this.gameState = 'loading';
     this.currentLevelIndex++;
     if (this.checkGameCompletion()) return this.handleGameCompletion();
-    this.loadLevel();
+    this.loadLevel(this.resetPlayer());
+    this.gameState = 'playing';
+  }
+
+  resetPlayer() {
     this.player.reset(this.currentLevel.firstPlatform);
     this.playerPhysics.reset();
-    this.gameState = 'playing';
   }
 
   handleGameCompletion() {
