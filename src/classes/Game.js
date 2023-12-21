@@ -5,6 +5,7 @@ import { Level } from './Level';
 import { Camera } from './Camera';
 import { Joystick } from './Joystick';
 import { PlayerPhysics } from './PlayerPhysics';
+import { Light } from './Light';
 import { getTime } from './Helpers';
 import level1 from '../../levels/1.json';
 import level2 from '../../levels/2.json';
@@ -106,11 +107,8 @@ export class Game {
   }
 
   initLights() {
-    this.directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-    this.directionalLight.position.set(-10, 30, 0);
-    this.directionalLight.castShadow = true;
-    this.directionalLight.target = this.player.mesh;
-    this.scene.add(this.directionalLight);
+    this.lights = new Light(this.player.mesh);
+    this.scene.add(this.lights.directionalLight);
   }
 
   initListeners() {
@@ -223,13 +221,6 @@ export class Game {
     this.playerPhysics.reset();
   }
 
-  updateDirectionalLight() {
-    const offset = new THREE.Vector3(-10, 30, 0);
-    this.directionalLight.position.copy(this.player.mesh.position.clone().add(offset));
-    this.directionalLight.target.position.copy(this.player.mesh.position);
-    this.directionalLight.target.updateMatrixWorld();
-  }
-
   checkGameOver() {
     return this.player.mesh.position.y < this.currentLevel.firstPlatform.y - 20;
   }
@@ -244,7 +235,7 @@ export class Game {
 
     this.world.step(deltaTime);
     this.playerPhysics.update(deltaTime);
-    this.updateDirectionalLight(); // TODO: Needs a light class now
+    this.lights.update(this.player.mesh.position);
     this.cameraController.update(this.player);
     if (this.currentLevel && this.currentLevel.objects && this.currentLevel.objects.length > 0) {
       this.currentLevel.objects.forEach( o => { o.update(deltaTime); } );
