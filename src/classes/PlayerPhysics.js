@@ -36,7 +36,6 @@ export class PlayerPhysics {
       position: this.player.initPosition,
       shape: shape
     });
-    this.world.addBody(this.body);
   }
 
   initListeners() {

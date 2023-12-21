@@ -9,7 +9,7 @@
       this.finalPlatform = null;
     }
 
-    loadLevel(data, index) {
+    loadLevel(data) {
       this.clearLevel();
       this.loadPlatforms(data.platforms, data.platformColor);
     }
@@ -29,5 +29,9 @@
         if (obj.body) this.world.removeBody(obj.body);
       });
       this.objects = [];
+    }
+
+    update(deltaTime) {
+      this.objects.forEach( o => { o.update(deltaTime); } );
     }
   }
