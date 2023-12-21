@@ -1,7 +1,7 @@
 {
-  "name": "platform",
+  "name": "Cube Jump",
   "version": "1.0.0",
-  "description": "",
+  "description": "Simple 3d platformer",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -9,8 +9,8 @@
     "build": "webpack --mode production"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "David Grayson",
+  "license": "MIT",
   "dependencies": {
     "cannon": "^0.6.2",
     "three": "^0.159.0"
