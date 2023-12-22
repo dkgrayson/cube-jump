@@ -43,7 +43,6 @@ export class Game {
     this.initTimer();
     this.initListeners();
     this.startGame();
-    this.animate();
   }
 
   initJoystick() {
@@ -68,7 +67,6 @@ export class Game {
 
   initPlayerPhysics() {
     this.playerPhysics = new PlayerPhysics(this.world, this.player);
-    this.playerPhysics.body.sleep();
     this.world.addBody(this.playerPhysics.body);
   }
 
@@ -98,7 +96,6 @@ export class Game {
   }
 
   startGame() {
-    this.playerPhysics.body.wakeUp();
     this.gameState = GAME_STATES.PLAYING;
     this.timer.start();
     document.body.appendChild(this.renderer.domElement);
@@ -213,7 +210,7 @@ export class Game {
 
   updateDeltaTime() {
     const now = performance.now();
-    this.deltaTime = (now - this.lastTime) / 1000;
+    this.deltaTime = Math.min((now - this.lastTime) / 1000, 0.01);
     this.lastTime = now;
   }
 

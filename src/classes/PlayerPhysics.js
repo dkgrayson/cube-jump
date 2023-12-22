@@ -54,6 +54,7 @@ export class PlayerPhysics {
     jumpButton.addEventListener('touchstart', () => {
       this.keys.jump = true;
     });
+
     jumpButton.addEventListener('touchend', () => {
       this.keys.jump = false;
     });
@@ -203,7 +204,7 @@ export class PlayerPhysics {
   }
 
   reset(platform) {
-    this.resetKeys();
+    // this.resetKeys();
     this.resetMovement();
     this.isJumping = false;
     this.isOnGround = true;
