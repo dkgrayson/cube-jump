@@ -105,8 +105,8 @@ export class Game {
   handleCollision = (event) => {
     if (!this.gameState === GAME_STATES.PLAYING) return;
     let collidedBody = event.contact.bi === this.playerPhysics.body ? event.contact.bj : event.contact.bi;
-    if (collidedBody.type === 2) this.playerPhysics.handleGroundCollision();
-    if (collidedBody.type === 4) this.handleLevelCompletion();
+    if (collidedBody.type === 2) return this.playerPhysics.handleGroundCollision();
+    if (collidedBody.type === 4) return this.handleLevelCompletion();
   }
 
   waitForStart() {
@@ -216,7 +216,7 @@ export class Game {
 
   animate = () => {
     if (this.gameState !== GAME_STATES.PLAYING) return;
-    if (this.checkGameOver()) this.handleGameOver();
+    if (this.checkGameOver()) return this.handleGameOver();
     this.updateDeltaTime();
     this.playerPhysics.update(this.deltaTime);
     this.lights.update(this.player.mesh.position);

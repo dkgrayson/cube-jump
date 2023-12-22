@@ -33,7 +33,7 @@ export class Player {
   }
 
   reset(platform) {
-    this.initPosition.copy(new THREE.Vector3(platform.x, platform.y + this.verticalThreshold, platform.z));
+    this.initPosition.copy(new THREE.Vector3(platform.x, platform.y + this.verticalThreshold + 1, platform.z));
     this.updatePosition(this.initPosition, this.initQuaternion);
   }
 
