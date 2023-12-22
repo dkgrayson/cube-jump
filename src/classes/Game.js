@@ -156,10 +156,11 @@ export class Game {
     this.gameState = 'gameOver';
     this.deaths++;
     this.updateDeathsDisplay();
-    this.loadLevel();
-    this.player.reset(this.currentLevel.firstPlatform);
-    this.playerPhysics.reset();
-    this.gameState = 'playing';
+    this.loadLevel((firstPlatformPosition) => {
+        this.world.clearForces();
+        this.resetPlayer(firstPlatformPosition);
+        this.gameState = 'playing';
+      });
   }
 
   handleLevelCompletion() {
@@ -171,6 +172,7 @@ export class Game {
       this.handleGameCompletion();
     } else {
       this.loadLevel((firstPlatformPosition) => {
+        this.world.clearForces();
         this.resetPlayer(firstPlatformPosition);
         this.gameState = 'playing';
       });
@@ -179,7 +181,7 @@ export class Game {
 
   resetPlayer(platform) {
     this.player.reset(platform);
-    this.playerPhysics.reset();
+    this.playerPhysics.reset(platform);
   }
 
 
@@ -212,11 +214,11 @@ export class Game {
     if (this.gameState !== 'playing') return;
     if (this.checkGameOver()) this.handleGameOver();
     this.updateDeltaTime();
-    this.world.step(this.deltaTime);
     this.playerPhysics.update(this.deltaTime);
     this.lights.update(this.player.mesh.position);
     this.cameraController.update(this.player);
     this.currentLevel.update(this.deltaTime);
+    this.world.step(this.deltaTime);
     this.renderer.render(this.scene, this.cameraController.camera);
     requestAnimationFrame(this.animate);
   }

@@ -10,6 +10,8 @@ export class PlayerPhysics {
     this.startJumpHeight = 0;
     this.isOnGround = true;
     this.jumpSpeed = 10;
+    this.jumpKeyHeldTime = 0;
+    this.maxJumpHoldTime = 0.5;
 
     this.acceleration = 20;
     this.deceleration = 5;
@@ -76,7 +78,7 @@ export class PlayerPhysics {
     return window.innerWidth <= 962;
   }
 
-  onKeyDown (event) {
+  onKeyDown(event) {
     switch (event.keyCode) {
       case 68: //d
         this.keys.right = true;
@@ -92,27 +94,27 @@ export class PlayerPhysics {
         break;
       case 32: //space
         if (this.isOnGround) {
-            this.keys.jump = true;
+          this.keys.jump = true;
         }
         break;
     }
   }
 
-  onKeyUp (event) {
+  onKeyUp(event) {
     switch (event.keyCode) {
-      case 68:
+      case 68: //d
         this.keys.right = false;
         break;
-      case 83:
+      case 83: //s
         this.keys.backward = false;
         break;
-      case 65:
+      case 65: //a
         this.keys.left = false;
         break;
-      case 87:
+      case 87: //w
         this.keys.forward = false;
         break;
-      case 32:
+      case 32: //space
         this.keys.jump = false;
         break;
     }
@@ -137,6 +139,10 @@ export class PlayerPhysics {
     if (this.keys.backward) accelerationVec.x -= acceleration;
     if (this.keys.forward) accelerationVec.x += acceleration;
 
+    this.applyAcceleration(accelerationVec, maxSpeed);
+  }
+
+  applyAcceleration(accelerationVec, maxSpeed) {
     this.body.velocity.x += accelerationVec.x * this.deltaTime;
     this.body.velocity.z += accelerationVec.z * this.deltaTime;
     this.body.velocity.x = THREE.MathUtils.clamp(this.body.velocity.x, -maxSpeed, maxSpeed);
@@ -144,25 +150,41 @@ export class PlayerPhysics {
   }
 
   decelerate(value, deceleration) {
-    if (value !== 0) {
-      let dec = deceleration * this.deltaTime;
-      return Math.abs(value) - dec > 0 ? value - Math.sign(value) * dec : 0;
-    }
-    return value;
+    let dec = deceleration * this.deltaTime;
+    return Math.abs(value) - dec > 0 ? value - Math.sign(value) * dec : 0;
   }
 
   updateVerticalMovement() {
-    if (this.keys.jump && this.isOnGround && !this.isJumping) {
-      this.isOnGround = false;
-      this.isJumping = true;
-      this.body.velocity.y = Math.sqrt(2 * this.jumpSpeed * this.world.gravity.length());
-    }
-
-    if (this.isJumping) {
-      if (this.player.mesh.position.y - this.startJumpHeight >= this.maxJumpHeight) {
-        this.isJumping = false;
+    if (this.keys.jump) {
+      if (this.isOnGround && !this.isJumping) {
+        this.startJump();
+      } else if (this.isJumping) {
+        this.continueJump();
+      }
+    } else {
+      if (this.isJumping) {
+          this.endJump();
       }
     }
+  }
+
+  startJump() {
+    this.isOnGround = false;
+    this.isJumping = true;
+    this.jumpKeyHeldTime = 0;
+    this.body.velocity.y = Math.sqrt(2 * this.jumpSpeed * this.world.gravity.length());
+  }
+
+  continueJump() {
+    if (this.jumpKeyHeldTime < this.maxJumpHoldTime) {
+      let additionalJumpForce = (this.maxJumpHoldTime - this.jumpKeyHeldTime) / this.maxJumpHoldTime;
+      this.body.velocity.y += additionalJumpForce * this.jumpSpeed * this.deltaTime;
+      this.jumpKeyHeldTime += this.deltaTime;
+    }
+  }
+
+  endJump() {
+    this.isJumping = false;
   }
 
   applyJoystickInput(dx, dy) {
@@ -180,21 +202,18 @@ export class PlayerPhysics {
     this.body.torque.set(0, 0, 0);
   }
 
-  reset() {
+  reset(platform) {
     this.resetKeys();
-    // this.resetMovement();
+    this.resetMovement();
     this.isJumping = false;
     this.isOnGround = true;
-    this.updatePosition(this.player.mesh.position, this.player.mesh.quaternion);
+    let position = new THREE.Vector3(platform.x, platform.y + this.player.verticalThreshold, platform.z);
+    this.updatePosition(position, this.player.initQuaternion);
   }
 
   updatePosition(p, q) {
     this.body.position.copy(p);
     this.body.quaternion.copy(q);
-  }
-
-  handleGameOver() {
-    this.reset();
   }
 
   update(deltaTime) {
