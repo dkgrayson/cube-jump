@@ -8,7 +8,7 @@ export class Player {
     this.height = 1;
     this.width = 1;
     this.depth = 1;
-    this.verticalThreshold = this.height + 5;
+    this.verticalThreshold = this.height + 3;
     this.initPosition = new THREE.Vector3(firstPlatform.x, firstPlatform.y + this.verticalThreshold, firstPlatform.z);
     this.initQuaternion = new THREE.Quaternion()
     this.initGraphics();
@@ -33,7 +33,7 @@ export class Player {
   }
 
   reset(platform) {
-    this.initPosition = new THREE.Vector3(platform.x, platform.y + this.verticalThreshold, platform.z);
+    this.initPosition.copy(new THREE.Vector3(platform.x, platform.y + this.verticalThreshold, platform.z));
     this.updatePosition(this.initPosition, this.initQuaternion);
   }
 
