@@ -20,7 +20,7 @@ const GAME_STATES = {
 export class Game {
   constructor(levels) {
     this.levels = levels;
-    this.currentLevelIndex = 2;
+    this.currentLevelIndex = 0;
     this.gameState = GAME_STATES.STARTING;
     this.loadingLevel = false;
     this.lastTime = performance.now();
