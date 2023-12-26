@@ -1,14 +1,11 @@
 import * as THREE from 'three';
 
 export class Player {
-  constructor(scene, world, game, firstPlatform) {
-    this.scene = scene;
-    this.world = world;
-    this.game = game;
+  constructor(firstPlatform) {
     this.height = 1;
     this.width = 1;
     this.depth = 1;
-    this.verticalThreshold = this.height + 3;
+    this.verticalThreshold = this.height + 10;
     this.initPosition = new THREE.Vector3(firstPlatform.x, firstPlatform.y + this.verticalThreshold, firstPlatform.z);
     this.initQuaternion = new THREE.Quaternion()
     this.initGraphics();

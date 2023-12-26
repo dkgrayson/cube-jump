@@ -3,8 +3,8 @@
   "background": "0xFAD8AE",
   "platformColor": "0xFFC966",
   "platforms": [
-    { "x": 0, "y": -6, "z": 0, "width": 12, "depth": 12, "isFirst": true },
-    { "x": 18, "y": -2, "z": 5, "width": 6, "depth": 6 },
-    { "x": 36, "y": 1, "z": -5, "width": 10, "depth": 10, "isFinal": true }
+    { "x": 10, "y": -2, "z": 0, "width": 12, "depth": 12, "isFirst": true },
+    { "x": 30, "y": 5, "z": 5, "width": 6, "depth": 6 },
+    { "x": 55, "y": 10, "z": -5, "width": 10, "depth": 10, "isFinal": true }
   ]
 }

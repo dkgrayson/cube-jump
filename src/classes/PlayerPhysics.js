@@ -2,12 +2,10 @@ import * as THREE from 'three';
 import * as CANNON from 'cannon';
 
 export class PlayerPhysics {
-  constructor(world, player) {
-    this.world = world;
+  constructor(gravity, player) {
+    this.gravity = gravity.length();
     this.player = player;
     this.isJumping = false;
-    this.maxJumpHeight = 15;
-    this.startJumpHeight = 0;
     this.isOnGround = true;
     this.jumpSpeed = 10;
     this.jumpKeyHeldTime = 0;
@@ -80,6 +78,7 @@ export class PlayerPhysics {
   }
 
   onKeyDown(event) {
+    event.preventDefault();
     switch (event.keyCode) {
       case 68: //d
         this.keys.right = true;
@@ -102,6 +101,7 @@ export class PlayerPhysics {
   }
 
   onKeyUp(event) {
+    event.preventDefault();
     switch (event.keyCode) {
       case 68: //d
         this.keys.right = false;
@@ -173,7 +173,7 @@ export class PlayerPhysics {
     this.isOnGround = false;
     this.isJumping = true;
     this.jumpKeyHeldTime = 0;
-    this.body.velocity.y = Math.sqrt(2 * this.jumpSpeed * this.world.gravity.length());
+    this.body.velocity.y = Math.sqrt(2 * this.jumpSpeed * this.gravity);
   }
 
   continueJump() {
@@ -204,7 +204,7 @@ export class PlayerPhysics {
   }
 
   reset(platform) {
-    // this.resetKeys();
+    this.resetKeys();
     this.resetMovement();
     this.isJumping = false;
     this.isOnGround = true;

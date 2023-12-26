@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import * as CANNON from 'cannon';
 
 export class Platform {
-  constructor(scene, world, platform, color) {
+  constructor(platform, color) {
     this.x = platform.x;
     this.y = platform.y;
     this.z = platform.z;
@@ -18,10 +18,8 @@ export class Platform {
     this.initialY = this.y;
     this.initialZ = this.z;
     this.currentTime = 0;
-    this.scene = scene;
-    this.world = world;
     this.color = new THREE.Color(parseInt(color, 16));
-    this.collisionType = this.isFinal ? 4 : 2;
+    this.collisionType = this.isFinal ? 2 : 1;
 
     this.initGraphics();
     this.initBody();
@@ -34,7 +32,6 @@ export class Platform {
     this.mesh.castShadow = true;
     this.mesh.receiveShadow = true;
     this.mesh.position.set(this.x, this.y, this.z);
-    this.scene.add(this.mesh);
   }
 
   initBody() {
@@ -46,7 +43,6 @@ export class Platform {
       collisionFilterGroup: 1,
       type: this.collisionType
     });
-    this.world.addBody(this.body);
   }
 
   update(deltaTime) {

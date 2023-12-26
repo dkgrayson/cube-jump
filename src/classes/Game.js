@@ -17,11 +17,10 @@ const GAME_STATES = {
   WIN: 'win'
 };
 
-
 export class Game {
   constructor(levels) {
     this.levels = levels;
-    this.currentLevelIndex = 0;
+    this.currentLevelIndex = 2;
     this.gameState = GAME_STATES.STARTING;
     this.loadingLevel = false;
     this.lastTime = performance.now();
@@ -61,18 +60,17 @@ export class Game {
   }
 
   initPlayer() {
-    this.player = new Player(this.scene, this.world, this, this.currentLevel.firstPlatform);
+    this.player = new Player(this.currentLevel.firstPlatform);
     this.scene.add(this.player.mesh);
   }
 
   initPlayerPhysics() {
-    this.playerPhysics = new PlayerPhysics(this.world, this.player);
+    this.playerPhysics = new PlayerPhysics(this.world.gravity, this.player);
     this.world.addBody(this.playerPhysics.body);
   }
 
   initCamera() {
-    let canvas = this.renderer.domElement;
-    this.cameraController = new Camera(canvas);
+    this.cameraController = new Camera();
   }
 
   initRendender() {
@@ -105,8 +103,8 @@ export class Game {
   handleCollision = (event) => {
     if (!this.gameState === GAME_STATES.PLAYING) return;
     let collidedBody = event.contact.bi === this.playerPhysics.body ? event.contact.bj : event.contact.bi;
-    if (collidedBody.type === 2) return this.playerPhysics.handleGroundCollision();
-    if (collidedBody.type === 4) return this.handleLevelCompletion();
+    if (collidedBody.type === 1) return this.playerPhysics.handleGroundCollision();
+    if (collidedBody.type === 2) return this.handleLevelCompletion();
   }
 
   waitForStart() {
@@ -121,11 +119,28 @@ export class Game {
     if (this.loadingLevel) return;
     this.loadingLevel = true;
 
-    if (this.currentLevel) this.currentLevel.clearLevel();
+    if (this.currentLevel) {
+      this.currentLevel.objects.forEach(p => {
+        this.world.remove(p.body);
+        this.scene.remove(p.mesh);
+      });
+      this.currentlevel = [];
+      this.world.clearForces();
+      this.initLevel(callback);
+    }
+    else {
+      this.initLevel(callback);
+    }
+  }
 
+  initLevel(callback) {
     let levelData = this.levels[this.currentLevelIndex];
-    this.currentLevel = new Level(this.scene, this.world);
+    this.currentLevel = new Level();
     this.currentLevel.loadLevel(levelData, (firstPlatform) => {
+      this.currentLevel.objects.forEach(p => {
+        this.scene.add(p.mesh);
+        this.world.add(p.body);
+      });
       this.loadBackground(levelData);
       this.loadTitle(levelData.name, this.currentLevelIndex + 1);
       this.loadingLevel = false;
@@ -164,10 +179,8 @@ export class Game {
     this.gameState = GAME_STATES.GAME_OVER;
     this.deaths++;
     this.updateDeathsDisplay();
-    this.loadLevel((firstPlatformPosition) => {
-        this.resetPlayer(firstPlatformPosition);
-        this.gameState = GAME_STATES.PLAYING;
-      });
+    this.resetPlayer(this.currentLevel.firstPlatform.mesh.position);
+    this.gameState = GAME_STATES.PLAYING;
   }
 
   handleLevelCompletion() {
@@ -216,12 +229,12 @@ export class Game {
 
   animate = () => {
     if (this.gameState !== GAME_STATES.PLAYING) return;
-    if (this.checkGameOver()) return this.handleGameOver();
+    if (this.checkGameOver()) this.handleGameOver();
     this.updateDeltaTime();
+    this.currentLevel.update(this.deltaTime);
     this.playerPhysics.update(this.deltaTime);
     this.lights.update(this.player.mesh.position);
-    this.cameraController.update(this.player);
-    this.currentLevel.update(this.deltaTime);
+    this.cameraController.update(this.player.mesh.position);
     this.world.step(this.deltaTime);
     this.renderer.render(this.scene, this.cameraController.camera);
     requestAnimationFrame(this.animate);
