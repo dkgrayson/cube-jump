@@ -5,7 +5,7 @@ export class Player {
     this.height = 1;
     this.width = 1;
     this.depth = 1;
-    this.verticalThreshold = this.height + 10;
+    this.verticalThreshold = this.height + 0;
     this.initPosition = new THREE.Vector3(firstPlatform.x, firstPlatform.y + this.verticalThreshold, firstPlatform.z);
     this.initQuaternion = new THREE.Quaternion()
     this.initGraphics();

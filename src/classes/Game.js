@@ -21,6 +21,7 @@ export class Game {
   constructor(levels) {
     this.levels = levels;
     this.currentLevelIndex = 0;
+    this.currentLevelDisplay = 1;
     this.gameState = GAME_STATES.STARTING;
     this.loadingLevel = false;
     this.lastTime = performance.now();
@@ -102,9 +103,12 @@ export class Game {
 
   handleCollision = (event) => {
     if (!this.gameState === GAME_STATES.PLAYING) return;
-    let collidedBody = event.contact.bi === this.playerPhysics.body ? event.contact.bj : event.contact.bi;
-    if (collidedBody.type === 1) return this.playerPhysics.handleGroundCollision();
-    if (collidedBody.type === 2) return this.handleLevelCompletion();
+    let that = this;
+    setTimeout(function() {
+      let collidedBody = event.contact.bi === that.playerPhysics.body ? event.contact.bj : event.contact.bi;
+      if (collidedBody.type === 1) return that.playerPhysics.handleGroundCollision();
+      if (collidedBody.type === 2) return that.handleLevelCompletion();
+    }, 0);
   }
 
   waitForStart() {
@@ -142,7 +146,7 @@ export class Game {
         this.world.add(p.body);
       });
       this.loadBackground(levelData);
-      this.loadTitle(levelData.name, this.currentLevelIndex + 1);
+      this.loadTitle(levelData.name, this.currentLevelDisplay);
       this.loadingLevel = false;
       if (callback) callback(firstPlatform);
     });
@@ -157,7 +161,8 @@ export class Game {
   loadOutro() {
     let time = document.getElementById('stats-time');
     let deaths = document.getElementById('stats-deaths');
-    let [minutes, seconds] = getTime(this.timer.time);
+    const minutes = Math.floor(this.timer.time / 60).toString().padStart(2, '0');
+    const seconds = (this.timer.time % 60).toString().padStart(2, '0');
     time.innerText = `Total Time: ${minutes.padStart(2, '0')}:${seconds.padStart(2, '0')}`;
     deaths.innerText = `Total Deaths: ${this.deaths}`
     document.getElementById('outro').classList.add('active');
@@ -181,17 +186,27 @@ export class Game {
     this.updateDeathsDisplay();
     this.resetPlayer(this.currentLevel.firstPlatform.mesh.position);
     this.gameState = GAME_STATES.PLAYING;
+    this.world.clearForces();
   }
 
   handleLevelCompletion() {
     if (!this.gameState === GAME_STATES.PLAYING) return;
     this.gameState = GAME_STATES.LEVEL_COMPLETE;
     this.currentLevelIndex++;
+    this.currentLevelDisplay++;
+    this.player.reset(this.currentLevel.finalPlatform.mesh.position);
     if (this.checkGameCompletion()) {
       this.handleGameCompletion();
     } else {
+      this.world.remove(this.playerPhysics.body);
+      this.scene.remove(this.player.mesh);
       this.loadLevel((firstPlatformPosition) => {
         this.resetPlayer(firstPlatformPosition);
+        this.updateDeltaTime();
+        this.renderer.render(this.scene, this.cameraController.camera);
+        this.world.addBody(this.playerPhysics.body);
+        this.world.step(this.deltaTime);
+        this.scene.add(this.player.mesh);
         this.gameState = GAME_STATES.PLAYING;
       });
     }
