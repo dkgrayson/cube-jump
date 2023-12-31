@@ -27,7 +27,10 @@ export class Platform {
 
   initGraphics() {
     let geometry = new THREE.BoxGeometry(this.width, this.height, this.depth);
-    let material = new THREE.MeshStandardMaterial({ color: this.color, roughness: .1, metalness: .1 });
+    let material =
+      this.isFinal ?
+        new THREE.MeshStandardMaterial( { color: 0x000000, specular: 0xFFFFFF, shininess: 100, metalness: 1})
+        : new THREE.MeshStandardMaterial({ color: this.color, roughness: .1, metalness: .1 });
     this.mesh = new THREE.Mesh(geometry, material);
     this.mesh.castShadow = true;
     this.mesh.receiveShadow = true;

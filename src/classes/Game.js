@@ -7,7 +7,6 @@ import { Joystick } from './Joystick';
 import { PlayerPhysics } from './PlayerPhysics';
 import { Light } from './Light';
 import { Timer } from './Timer';
-import { getTime } from './Helpers';
 
 const GAME_STATES = {
   STARTING: 'starting',

@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 export class Light {
   constructor(target) {
-    this.offset = new THREE.Vector3(-10, 30, 0)
+    this.offset = new THREE.Vector3(-5, 50, 0)
     this.directionalLight = new THREE.DirectionalLight(0xffffff, 1);
     this.directionalLight.position.copy(this.offset);
     this.directionalLight.castShadow = true;
