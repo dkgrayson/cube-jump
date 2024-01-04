@@ -21,7 +21,7 @@ export class Game {
     this.levels = levels;
     this.currentLevelIndex = 0;
     this.currentLevelDisplay = 1;
-    this.skipStart = true;
+    this.skipStart = false;
     this.gameState = GAME_STATES.STARTING;
     this.loadingLevel = false;
     this.lastTime = performance.now();
