@@ -17,7 +17,7 @@
       if (callback) callback(this.firstPlatform);
     }
 
-    update(deltaTime) {
-      this.objects.forEach( o => { o.update(deltaTime); } );
+    update(deltaTime, playerPosition) {
+      this.objects.forEach( o => { o.update(deltaTime, playerPosition); } );
     }
   }

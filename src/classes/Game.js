@@ -21,12 +21,20 @@ export class Game {
     this.levels = levels;
     this.currentLevelIndex = 0;
     this.currentLevelDisplay = 1;
+    this.skipStart = false;
     this.gameState = GAME_STATES.STARTING;
     this.loadingLevel = false;
     this.lastTime = performance.now();
     this.deltaTime = 0;
     this.deaths = 0;
-    this.waitForStart();
+    this.enemies = [];
+    if (this.skipStart) {
+      document.getElementById('intro').style.display = 'none';
+      this.initGame();
+    }
+    else {
+      this.waitForStart();
+    }
   }
 
   initGame() {
@@ -103,10 +111,26 @@ export class Game {
   handleCollision = (event) => {
     if (!this.gameState === GAME_STATES.PLAYING) return;
     let that = this;
-    setTimeout(function() {
+    setTimeout(function() { // Necessary to prevent silly errors in rendering
       let collidedBody = event.contact.bi === that.playerPhysics.body ? event.contact.bj : event.contact.bi;
-      if (collidedBody.type === 1) return that.playerPhysics.handleGroundCollision();
-      if (collidedBody.type === 2) return that.handleLevelCompletion();
+      switch (collidedBody.type) {
+        case 1:
+          that.playerPhysics.handleGroundCollision();
+          break;
+        case 2:
+          that.handleLevelCompletion();
+          break;
+        case 3:
+          let enemy = (that.currentLevel.objects.find((platform) => platform.body === collidedBody)).enemy
+          if (enemy) { that.addEnemy(enemy); }
+          that.playerPhysics.handleGroundCollision();
+          break;
+        case 4:
+          that.handleGameOver();
+          break;
+        default:
+          break;
+      }
     }, 0);
   }
 
@@ -181,6 +205,7 @@ export class Game {
   handleGameOver() {
     if (!this.gameState === GAME_STATES.PLAYING) return;
     this.gameState = GAME_STATES.GAME_OVER;
+    this.resetEnemies();
     this.deaths++;
     this.updateDeathsDisplay();
     this.resetPlayer(this.currentLevel.firstPlatform.mesh.position);
@@ -193,6 +218,8 @@ export class Game {
     this.gameState = GAME_STATES.LEVEL_COMPLETE;
     this.currentLevelIndex++;
     this.currentLevelDisplay++;
+    this.resetEnemies();
+    this.enemies = [];
     this.player.reset(this.currentLevel.finalPlatform.mesh.position);
     if (this.checkGameCompletion()) {
       this.handleGameCompletion();
@@ -214,6 +241,23 @@ export class Game {
   resetPlayer(platform) {
     this.player.reset(platform);
     this.playerPhysics.reset(platform);
+  }
+
+  addEnemy(enemy) {
+    enemy.active = true;
+    this.enemies.push(enemy);
+    this.scene.add(enemy.mesh);
+    this.world.addBody(enemy.body);
+  }
+
+  resetEnemies() {
+    this.enemies.forEach( enemy => { this.resetEnemy(enemy); } );
+  }
+
+  resetEnemy(enemy) {
+    this.world.remove(enemy.body);
+    this.scene.remove(enemy.mesh);
+    enemy.reset();
   }
 
   handleGameCompletion() {
@@ -245,7 +289,7 @@ export class Game {
     if (this.gameState !== GAME_STATES.PLAYING) return;
     if (this.checkGameOver()) this.handleGameOver();
     this.updateDeltaTime();
-    this.currentLevel.update(this.deltaTime);
+    this.currentLevel.update(this.deltaTime, this.player.mesh.position);
     this.playerPhysics.update(this.deltaTime);
     this.lights.update(this.player.mesh.position);
     this.cameraController.update(this.player.mesh.position);
